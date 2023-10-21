@@ -1,10 +1,6 @@
 import random, json
 
-'''
-with open ('raw.json') as f:
-    users = json.load(f)
-    print(len(users))
-'''
+
 
 # Random Number will be between the from and to numbers
 def generate_random_number(from_num: int, to_num: int):
@@ -50,7 +46,21 @@ def create_password(num_chars: int):
     
     return password
 
+def add_passwords():
+    with open ('raw.json') as f:
+        users = json.load(f)
 
-print(create_password(10))
+    # Code to add passwords
+    for user in users:
+        password = create_password(password_length())
+        user.update({'password': password})
+
+    with open ('user_list.json', 'x') as f:
+        json.dump(users, f, indent = 2)
+
+add_passwords()
+
+
+
 
 
