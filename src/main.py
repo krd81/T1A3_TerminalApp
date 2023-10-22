@@ -27,10 +27,16 @@
 
 # Main
 
+def get_user_input():
+    return input
+
+
+
+
 # Display menu
 def display_main_menu():
-    print('Welcome to K-Star Video - the home of all the latest movies')
-    print('*************************************************************\n')
+    print('Welcome to K-Star Video - the home of the latest movies and all time classics')
+    print('******************************************************************************\n')
     print('1. Search for a title')
     print('2. Your account')
     print('3. Return items')
@@ -38,7 +44,7 @@ def display_main_menu():
 
 def display_search_menu():
     print('1. Search by title')
-    print('2. Search by actors e.g. "Tom Hanks or Julia Roberts"')
+    print('2. Search by actor e.g. "Tom Hanks or Julia Roberts"')
     print('3. Search by genre')
 
 def display_genre_menu():
@@ -61,13 +67,14 @@ while user_response != '4':
 
     match user_response:
         case 1:
-            pass
+            print("yes")
         case 2:
-            pass
+            print("yes")
         case 3:
-            pass
+            print("yes")
         case 4:
-            pass
+            print("yes")
         case _:
-            # raise exception
+            print("yes")
+
 
