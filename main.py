@@ -136,7 +136,6 @@ def password_check(password):
         result = True
     return result
 
-input = ''
 
 def get_user_input(prompt):
     input_value = input(prompt)
