@@ -95,7 +95,7 @@ class Movie:
     def get_year(self):
         return self.year
     
-    def get_cast(self):
+    def get_cast(self):      
         return self.cast
     
     def get_genres(self):
@@ -104,7 +104,23 @@ class Movie:
     def get_summary(self):
         return self.summary
     
-
+    
+    # cast_shortlist() method prints a maximum of 4 cast names when a title is displayed
+    def cast_shortlist(self):
+        num_cast = min(len(self.cast), 4) # Ensures a max of 4 names are printed
+        print(f"Starring:") 
+        print('\t', end = '') # end argument removes the line break
+        i = 0
+        while i < num_cast:
+            if(num_cast - i > 1):
+                print(self.cast[i]+', ', end = '') # Loops through the cast list
+            else:
+                print(self.cast[i], end = '') # Omits the ',' for the last name
+            i += 1
+        
+        # If not all cast is shown '...' is printed to indicate some names are not shown
+        if len(self.cast) > 4 :
+            print('...')
 
 
 
@@ -152,13 +168,20 @@ with open ('movies.json') as f:
 
 
 # Need to know the search term (title, actor, genre??) - lambda? comprehension?
+# Show a maximum of 10 results? Option to view next results if >10
+# Need to be able to select a title once the list is populated
 def search_movies():
-    search_title = get_user_input('Enter a title')
-    for movie in movies:
-        if (search_title == movie.get('title')):
-            current_movie = Movie(movie.get('title'),movie.get('year'),movie.get('cast'),movie.get('genres'),movie.get('href'),movie.get('extract'),movie.get('thumbnail'),movie.get('thumbnail_width'),movie.get('thumbnail_height'))
-            print(f'Matching results:\n \t {current_movie.get_title()} ({current_movie.get_year()})')
-            print(f'\t {current_movie.get_cast()}')
+    search_title = get_user_input('Enter a title: ')
+    matching_movies = []
+    i = 1
+    for movie in movies:       
+        if (search_title in movie.get('title')):
+            current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))
+            print(f'{i}: {current_movie.get_title()} ({current_movie.get_year()})')
+            current_movie.cast_shortlist() # prints cast names
+            print('\n')
+            matching_movies.append(current_movie)
+            i += 1
 
 
 def menu_control():
@@ -166,7 +189,7 @@ def menu_control():
     choice = get_user_input('')
     if  choice == '1':
         display_search_menu()
-    #    1 = title, 2 = actor, 3 = genre
+        # 1 = title, 2 = actor, 3 = genre
         choice = get_user_input('')
         if choice == '1': 
             # choice = get_user_input('Enter title: ')
@@ -182,8 +205,6 @@ def menu_control():
 
 
 current_user = ''
-
-
 
 def username_check(email):
     result = False
@@ -206,6 +227,7 @@ def password_check(password):
 
 def get_user_input(prompt):
     input_value = input(prompt)
+    print('\n')
     return input_value
 
 
