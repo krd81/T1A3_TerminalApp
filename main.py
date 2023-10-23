@@ -11,7 +11,7 @@
     - Return title
     - Confirmation
 
-3. Class for users, contains their rental history, current rentals (recommendations?)
+3. Class for users, creates "users", updates their rental history, current rentals (recommendations?)
 
 4. Class for titles (data required: title, genre, actors, year, runtime, rating, plot)
 
@@ -20,51 +20,39 @@
     - displaying the menu
     - adding users
     - renting/returning titles
-
- "id": 1,
-    "email": "isidro_von@hotmail.com",
-    "first": "Torrey",
-    "last": "Veum",
-    "company": "Hilll, Mayert and Wolf",
-    "created_at": "2014-12-25T04:06:27.981Z",
-    "country": "Switzerland",
-    "password": "SorDydlhb"
-
     
 '''
 import json
-class Users:
-    users = []
-    matching_user = {}
+class User:
+    def __init__(self, id, email, first, last, company, created_at, country, password) -> None:
+        self.id = id
+        self.email = email
+        self.first = first
+        self.last = last
+        self.company = company
+        self.created_at = created_at
+        self.country = country
+        self.password = password
+        self.current_rentals = []
+        self.all_rentals = []
+        
+  
 
-    with open ('user_list.json') as f:
-        users = json.load(f)
+ 
 
-    def get_users(self):
-        return self.users
+    def get_password(self):
+        return self.password
     
+    def get_firstname(self):
+        return self.first
+
+    def get_fullname(self):
+        fullname = f'{self.first} {self.last}'
+        return fullname
+      
     def update_users(self):
         # Add rental information to user list
         pass
-
-    def username_check(self, email):
-       result = False
-       for user in self.users:
-            if(email == user.get('email')):
-                self.matching_user = user.get('email')
-                result = True
-                break
-      
-       return result
-    
-
-    def password_check(self, password):
-        result = False
-        if (password == self.matching_user.get('password')):
-            result = True
-        return result
-
-
 
 
     # Writes data back to file when user exits
@@ -123,7 +111,7 @@ while user_response != '4':
 '''
 
 users = []
-matching_user = {}
+current_user = ''
 
 with open ('user_list.json') as f:
     users = json.load(f)
@@ -131,39 +119,41 @@ with open ('user_list.json') as f:
 
 def username_check(email):
     result = False
-    matching_user = {}
+    
     for user in users:
         if(email == user.get('email')):
-            matching_user = user
+            global current_user
+            current_user = User(user.get('id'),user.get('email'),user.get('first'),user.get('last'),user.get('company'),user.get('created_at'),user.get('country'),user.get('password'))
             result = True
             break    # break is to stop the if statement once a match has been found
-    
-    return result, matching_user
-    
-
-def password_check(email, password):
-    result = False
-    matching_user = username_check(email)[1]
-    if (password == matching_user.get('password')):
-        result = True
+    print(type(current_user))
     return result
 
 
+def password_check(password):
+    result = False
+    if (password == current_user.get_password()):
+        result = True
+    return result
 
-def get_user_input():
-    return input
+input = ''
+
+def get_user_input(prompt):
+    input_value = input(prompt)
+    return input_value
 
 # print()
-username = input("Enter username (email address): ")
+# username = input("Enter username (email address): ")
 
 # print("Enter your password: ")
-password = input("Enter your password: ")
+# password = input("Enter your password: ")
 
-
-if username_check(username)[0] == True: # Check for valid username
-    if password_check(username, password) == True:
+username = get_user_input('Enter username (email address): ')
+if username_check(username) == True: # Check for valid username
+    password = get_user_input('Enter your password: ')
+    if password_check(password) == True:
         display_main_menu()
     else:
-        print("Incorrect password, please try again")
+        print('Incorrect password, please try again')
 else:
-    print("Email address not recognised, please try again")
+    print('Email address not recognised, please try again')
