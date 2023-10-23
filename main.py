@@ -20,6 +20,16 @@
     - displaying the menu
     - adding users
     - renting/returning titles
+
+ "id": 1,
+    "email": "isidro_von@hotmail.com",
+    "first": "Torrey",
+    "last": "Veum",
+    "company": "Hilll, Mayert and Wolf",
+    "created_at": "2014-12-25T04:06:27.981Z",
+    "country": "Switzerland",
+    "password": "SorDydlhb"
+
     
 '''
 import json
@@ -120,18 +130,20 @@ with open ('user_list.json') as f:
 
 
 def username_check(email):
-       result = False
-       for user in users:
-            if(email == user.get('email')):
-                matching_user = user
-                result = True
-                break
-      
-       return result
+    result = False
+    matching_user = {}
+    for user in users:
+        if(email == user.get('email')):
+            matching_user = user
+            result = True
+            break    # break is to stop the if statement once a match has been found
+    
+    return result, matching_user
     
 
-def password_check(password):
+def password_check(email, password):
     result = False
+    matching_user = username_check(email)[1]
     if (password == matching_user.get('password')):
         result = True
     return result
@@ -148,10 +160,10 @@ username = input("Enter username (email address): ")
 password = input("Enter your password: ")
 
 
-if username_check(username) == True: # Check for valid username
-    if password_check(password) == True:
+if username_check(username)[0] == True: # Check for valid username
+    if password_check(username, password) == True:
         display_main_menu()
     else:
-        print("Incorect password, please try again")
+        print("Incorrect password, please try again")
 else:
     print("Email address not recognised, please try again")
