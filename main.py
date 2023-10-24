@@ -205,7 +205,20 @@ def search_movies():
     '''
     # 'pages' to cycle when displaying movies on screen
     pages = (num_movies // 10) + remainder_check(num_movies, 10)
-    while (i < pages):
+    while (i < pages-1):
+        # Prints movie info for all but the last page   
+        display_movies(i*10, (i+1)*10)
+        print("More...")
+        get_user_input("Press enter to continue")
+        i += 1
+
+    if (i == pages-1): # The last page
+        display_movies(i*10, num_movies-1)
+        
+
+
+'''
+while (i < pages):
         if (i == 0): # First page
             display_movies(0, 10)
             if (pages > 1):
@@ -218,6 +231,7 @@ def search_movies():
             print("More...")
             get_user_input("Press enter to continue")
         i += 1
+'''
 
 
 # Method to display 10 movies at a time
@@ -226,7 +240,7 @@ def display_movies(from_index, to_index):
     count = 1
     while index < to_index:
         # For element 0 - 9 [10 - 19, 20 - 29 etc], print movie info
-        print(f'{count}: {matching_movies[index].get_title()}: ({matching_movies[index].get_year()})')
+        print(f'{count}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
         matching_movies[index].cast_shortlist() # prints cast names
         print('\n')
         index += 1
