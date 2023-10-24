@@ -1,23 +1,19 @@
-def get_user_input(prompt):
-    user_response = input(prompt)
-
-    
-    return user_response
-
-# Use number input method whenever a menu option is to be selected
-def get_number_input(prompt):
-    user_response = None
-    while not (isinstance(user_response,int)):
-        user_input = get_user_input(prompt)
-        try:
-            user_response = int(user_input)
-            print(user_response)
-        except ValueError:
-            print('Invalid input. Please try again (value error thrown)')
-        except TypeError:
-            print('Type error thrown')
-            break
-    return user_response
+import textwrap
+extract = "Harry Potter and the Philosopher's Stone is a 2001 fantasy film directed by Chris Columbus and produced by David Heyman, from a screenplay by Steve Kloves, based on the 1997 novel of the same name by J. K. Rowling. It is the first instalment in the Harry Potter film series. The film stars Daniel Radcliffe as Harry Potter, with Rupert Grint as Ron Weasley, and Emma Watson as Hermione Granger. Its story follows Harry's first year at Hogwarts School of Witchcraft and Wizardry as he discovers that he is a famous wizard and begins his formal wizarding education."
 
 
-get_number_input('Enter a number: ')
+
+output = textwrap.wrap(extract, width = 100, break_long_words= False)
+
+
+for line in output:
+    print(line)    
+print()
+
+'''
+i = 0
+while (i < len(output)):
+    print(output[i])
+    i += 1
+print()
+'''

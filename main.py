@@ -22,7 +22,7 @@
     - renting/returning titles
     
 '''
-import json, math
+import json, math, textwrap
 class User:
     def __init__(self, id, email, first, last, company, created_at, country, password) -> None:
         self.id = id
@@ -40,8 +40,7 @@ class User:
 
  
 
-    def get_password(self):
-        return self.password
+    
     
     def get_firstname(self):
         return self.first
@@ -49,6 +48,15 @@ class User:
     def get_fullname(self):
         fullname = f'{self.first} {self.last}'
         return fullname
+    
+    def get_email(self):
+        return self.email
+
+    def get_password(self):
+        return self.password
+    
+    def get_country(self):
+        return self.country
       
     def update_current_rentals(self, action, movie):
         # action = ['rental', 'return']
@@ -59,9 +67,12 @@ class User:
             self.current_rentals.remove(movie)
 
     
-    def show_rentals():
-        pass
+    def get_current_rentals(self):
+        return self.current_rentals
 
+
+    def get_rental_history(self):
+        return self.all_rentals
 
     # Writes data back to file when user exits
     def save_users(self):
@@ -180,6 +191,7 @@ with open ('movies.json') as f:
     # movies = movies.reverse()
 
 matching_movies = [] # global variable to be used by different methods, method required to re-set it once new search begins
+current_user = None
 
 
 def get_user_input(prompt):
@@ -202,6 +214,7 @@ def get_number_input(prompt):
     return user_response
 
 
+# If no other uses for this method, incorporate into movie_list_control() method
 def remainder_check(numerator, divisor):
     result = 0
     if(numerator % divisor) > 0:
@@ -280,7 +293,12 @@ def display_selected_movie(index, from_index, to_index):
     print(f'{matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
     matching_movies[index].cast_full() # prints all cast names
     print('\n')
-    print(matching_movies[index].get_summary())
+    # Print wrapped lines for better readability
+    plot_summary = textwrap.wrap((matching_movies[index].get_summary()), width = 100, break_long_words= False)
+    for line in plot_summary:
+        print(line)    
+    print()
+
     print('\n')
     print(f'1. Rent Movie\t\t2. Back to list\t\t3. Back to menu')
     choice = get_number_input('Enter number to select option: ')
@@ -303,15 +321,74 @@ def rent_movie(movie):
     choice = get_user_input('Would you like to rent this movie? Enter "Y" or "N": ').upper()
     if (choice == 'Y'):
         # Call method to add title to user's list of current rentals
-        current_user.update_current_rentals("rental", movie)
+        current_user.update_current_rentals('rental', movie)
 
 
 def return_movie(movie):
-    pass
+    current_user.get_current_rentals()
 
-def view_user_movies():
-    pass
-   
+
+def show_user_movies(movie_list):
+    if (len(movie_list) > 0):
+        i = 0
+        while (i < len(movie_list)):
+            print(f'{i+1}. {movie_list[i].get_title()} ({movie_list[i].get_year()})')
+            print('\n')
+            i += 1
+    else:
+        print('No rentals to show')
+
+
+
+def diplay_user_info():
+    print(f'Hi, {current_user.get_firstname()}! Here\'s your account info:')
+    print(f'Name: {current_user.get_fullname()}')
+    print(f'Username: {current_user.get_email()}')
+    print(f'Country: {current_user.get_country()}')
+    print('***************************************************************************')
+    print('CURRENT RENTALS:')
+    show_user_movies(current_user.get_current_rentals())
+    '''
+    if (len(current_user.get_current_rentals()) > 0):
+        i = 0
+        while (i < len(current_user.get_current_rentals())):
+            print(f'{i+1}. {current_user.get_current_rentals()[i].get_title()} ({current_user.get_current_rentals()[i].get_year()})')
+            print('\n')
+            i += 1
+    else:
+        print('You have no rentals at this time')     
+    '''
+    print('***************************************************************************')
+    print('RENTAL HISTORY:')
+    show_user_movies(current_user.get_rental_history())
+    '''
+    if (len(current_user.get_rental_history()) > 0):
+        i = 0
+        while (i < len(current_user.get_rental_history())):
+            print(f'{i+1}. {current_user.get_rental_history()[i].get_title()} ({current_user.get_rental_history()[i].get_year()})')
+            print('\n')
+            i += 1
+    else:
+        print('Looks like you\'re still looking for your first movie rental!')
+        print('Select the option below to search our huge list of movies!')
+    '''
+    print('***************************************************************************')
+    print(f'1. Return Movie\t\t2. Back to main menu')
+    choice = get_number_input('Enter number to select option: ')
+    if (choice == 1): # Return movie
+        # Show list of current rentals again
+        show_user_movies(current_user.get_current_rentals())
+        choice = get_number_input('Enter the movie number you\'re returning: ')
+        # Call update_rental method, with the 'return' parameter
+        current_user.update_current_rentals('return', current_user.get_current_rentals()[choice-1])
+        print('Item returned')
+        print('CURRENT RENTALS:')
+        show_user_movies(current_user.get_current_rentals())
+        print('***************************************************************************')
+    elif (choice == 2):
+        display_main_menu()
+    else:
+        print('Invalid entry - please try again')
 
 
 
@@ -338,12 +415,13 @@ def menu_control():
         else:
             pass
             # print('Invalid input - please try again')
+    elif choice == 2:
+        diplay_user_info()
+        
 
 
 
 
-
-current_user = ''
 
 def username_check(email):
     result = False
