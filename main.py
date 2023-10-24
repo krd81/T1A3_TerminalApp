@@ -105,6 +105,22 @@ class Movie:
         return self.summary
     
     
+     # cast_full() method prints all cast names when a title is displayed
+    def cast_full(self):
+        num_cast = len(self.cast) 
+        print(f"Starring:") 
+        print('\t', end = '') # end argument removes the line break
+        i = 0
+        while i < num_cast:
+            if(num_cast - i > 1):
+                print(self.cast[i]+', ', end = '') # Loops through the cast list
+            else:
+                print(self.cast[i], end = '') # Omits the ',' for the last name
+            i += 1
+   
+
+
+
     # cast_shortlist() method prints a maximum of 4 cast names when a title is displayed
     def cast_shortlist(self):
         num_cast = min(len(self.cast), 4) # Ensures a max of 4 names are printed
@@ -121,6 +137,9 @@ class Movie:
         # If not all cast is shown '...' is printed to indicate some names are not shown
         if len(self.cast) > 4 :
             print('...')
+
+
+
 
 
 
@@ -172,6 +191,7 @@ matching_movies = []
 
 def get_user_input(prompt):
     input_value = input(prompt)
+
     print('\n')
     return input_value
 
@@ -207,46 +227,44 @@ def search_movies():
     pages = (num_movies // 10) + remainder_check(num_movies, 10)
     while (i < pages-1):
         # Prints movie info for all but the last page   
-        display_movies(i*10, (i+1)*10)
+        display_movie_list(i*10, (i+1)*10)
         print("More...")
-        get_user_input("Press enter to continue")
+        try:
+            choice = int(get_user_input("Press enter to continue or select movie "))
+            if (isinstance(choice, int)):
+                display_movie(choice-1)
+        except:
+            pass
+        
         i += 1
 
     if (i == pages-1): # The last page
-        display_movies(i*10, num_movies-1)
-        
+        display_movie_list(i*10, num_movies-1)
 
 
-'''
-while (i < pages):
-        if (i == 0): # First page
-            display_movies(0, 10)
-            if (pages > 1):
-                print("More...")
-                get_user_input("Press enter to continue")
-        elif (i == pages-1): # Last page <--- THIS IS CAUSING AN ERROR!
-            display_movies(i*10, -1)
-        else: # All other pages
-            display_movies(i*10, (i+1)*10)
-            print("More...")
-            get_user_input("Press enter to continue")
-        i += 1
-'''
 
 
-# Method to display 10 movies at a time
-def display_movies(from_index, to_index):
+# Method to display max 10 movies at a time
+def display_movie_list(from_index, to_index):
     index = from_index
-    count = 1
+    # count = 1
     while index < to_index:
         # For element 0 - 9 [10 - 19, 20 - 29 etc], print movie info
-        print(f'{count}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
+        print(f'{index+1}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
         matching_movies[index].cast_shortlist() # prints cast names
         print('\n')
         index += 1
-        count += 1
-        
+        # count += 1
 
+
+def display_movie(index):
+    print(f'{matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
+    matching_movies[index].cast_full() # prints all cast names
+    print('\n')
+    print(matching_movies[index].get_summary())
+    print('\n')
+    print(f'1. Rent Movie\t\t2. Back to list\t\t3. Back to menu')
+    return get_user_input("Enter: ")
 
 
 
