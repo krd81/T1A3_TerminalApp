@@ -10,6 +10,8 @@ for line in output:
     print(line)    
 print()
 
+
+
 '''
 i = 0
 while (i < len(output)):

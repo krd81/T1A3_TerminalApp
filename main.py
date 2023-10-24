@@ -10,6 +10,7 @@
     - Rent title
     - Return title
     - Confirmation
+    - Menus need to keep cycling until user chooses to exit - use 'while != ' condition each time
 
 3. Class for users, creates "users", updates their rental history, current rentals (recommendations?)
 
@@ -20,6 +21,11 @@
     - displaying the menu
     - adding users
     - renting/returning titles
+
+6. Search feature
+    - Back to return to earlier page
+    - When returning to main menu, previous search is deleted ***ISSUE***
+    - When searching for actor 'Matt Damon' multiple pages were displayed automatically ***ISSUE***
     
 '''
 import json, math, textwrap
@@ -150,11 +156,11 @@ class Movie:
 
 # Main
 
+matching_movies = [] # global variable to be used by different methods, method required to re-set it once new search begins
 
 # Display menu
 def display_main_menu():
-    print('Welcome to K-Star Video - the home of the latest movies and all time classics')
-    print('******************************************************************************\n')
+    matching_movies = None
     print('1. Search for a title')
     print('2. Your account/history')
     print('3. Return items')
@@ -190,7 +196,7 @@ with open ('movies.json') as f:
     movies = json.load(f)
     # movies = movies.reverse()
 
-matching_movies = [] # global variable to be used by different methods, method required to re-set it once new search begins
+
 current_user = None
 
 
@@ -260,20 +266,21 @@ def movie_list_control(num_movies):
         # Prints movie info for all but the last page   
         display_movie_list(i*10, (i+1)*10)
         print("More...")
-        try:
-            choice = int(get_user_input("Press enter to continue or select movie "))
-            if (isinstance(choice, int)):
-                print('\n\n')
-                # Passes as arguments the selected title and the indexes currently being displayed
-                # So that the user can return to this list, if desired
-                display_selected_movie(choice-1, i*10, (i+1)*10)
-        except:
-            pass
-        
+                
         i += 1
 
     if (i == pages-1): # The last page
         display_movie_list(i*10, num_movies-1)
+    
+    try:
+        choice = int(get_user_input("Press enter to continue or select movie "))
+        if (isinstance(choice, int)):
+            print('\n\n')
+            # Passes as arguments the selected title and the indexes currently being displayed
+            # So that the user can return to this list, if desired
+            display_selected_movie(choice-1, i*10, (i+1)*10)
+    except:
+        pass
 
 
 # Method to display max 10 movies at a time
@@ -313,7 +320,7 @@ def display_selected_movie(index, from_index, to_index):
     else:
         print('Invalid entry - please try again')
 
-    return get_user_input("Enter: ")
+    # return get_user_input("Enter: ")
 
 
 def rent_movie(movie):
@@ -324,12 +331,21 @@ def rent_movie(movie):
         current_user.update_current_rentals('rental', movie)
 
 
-def return_movie(movie):
-    current_user.get_current_rentals()
+def return_movie():    
+    show_user_movies(current_user.get_current_rentals())
+    print('***************************************************************************')
+    choice = get_number_input('Enter the movie number you\'re returning: ')
+    # Call update_rental method, with the 'return' parameter
+    current_user.update_current_rentals('return', current_user.get_current_rentals()[choice-1])
+    print('Item returned')
+    print('CURRENT RENTALS:')
+    show_user_movies(current_user.get_current_rentals())
+    print('***************************************************************************')
 
 
 def show_user_movies(movie_list):
     if (len(movie_list) > 0):
+        print('Here are your current rentals:')
         i = 0
         while (i < len(movie_list)):
             print(f'{i+1}. {movie_list[i].get_title()} ({movie_list[i].get_year()})')
@@ -340,7 +356,7 @@ def show_user_movies(movie_list):
 
 
 
-def diplay_user_info():
+def diplay_account_control():
     print(f'Hi, {current_user.get_firstname()}! Here\'s your account info:')
     print(f'Name: {current_user.get_fullname()}')
     print(f'Username: {current_user.get_email()}')
@@ -377,46 +393,74 @@ def diplay_user_info():
     choice = get_number_input('Enter number to select option: ')
     if (choice == 1): # Return movie
         # Show list of current rentals again
-        show_user_movies(current_user.get_current_rentals())
-        choice = get_number_input('Enter the movie number you\'re returning: ')
-        # Call update_rental method, with the 'return' parameter
-        current_user.update_current_rentals('return', current_user.get_current_rentals()[choice-1])
-        print('Item returned')
-        print('CURRENT RENTALS:')
-        show_user_movies(current_user.get_current_rentals())
-        print('***************************************************************************')
+        return_movie()
     elif (choice == 2):
         display_main_menu()
     else:
         print('Invalid entry - please try again')
 
 
-
-def menu_control():
-    display_main_menu()
-    choice = get_number_input('Enter number to select menu option: ')
-    if  choice == 1:
-        display_search_menu()
+def search_menu_control():
+    display_search_menu()
         # 1 = title, 2 = actor, 3 = genre
+    choice = get_number_input('Enter number to select menu option: ')
+    if choice == 1: 
+        choice = get_user_input('Enter title: ').lower()
+        search_movies('title', choice)
+    elif choice == 2: 
+        choice = get_user_input('Enter actor: ').lower()
+        search_movies('actor', choice)
+    elif choice == 3:
+        # List genres
+        choice = get_number_input('Enter number to select genre: ')
+        # Matching system to match genre to number - pass genre to search method
+        search_movies('genre', choice)
+    elif choice == 4:
+        pass
+    else:
+        pass
+        # print('Invalid input - please try again')
+
+def main_menu_control():
+    # Initial welcome message
+    print('Welcome to K-Star Video - the home of the latest movies and all time classics')
+    print('*****************************************************************************\n')
+    choice = None
+    while choice != 4:
+        display_main_menu()
+        # 1 = search, 2 = account, 3 = return items
         choice = get_number_input('Enter number to select menu option: ')
-        if choice == 1: 
-            choice = get_user_input('Enter title: ').lower()
-            search_movies('title', choice)
-        elif choice == 2: 
-            choice = get_user_input('Enter actor: ').lower()
-            search_movies('actor', choice)
+        if  choice == 1:
+            search_menu_control()
+            '''
+            display_search_menu()
+            # 1 = title, 2 = actor, 3 = genre
+            choice = get_number_input('Enter number to select menu option: ')
+            if choice == 1: 
+                choice = get_user_input('Enter title: ').lower()
+                search_movies('title', choice)
+            elif choice == 2: 
+                choice = get_user_input('Enter actor: ').lower()
+                search_movies('actor', choice)
+            elif choice == 3:
+                # List genres
+                choice = get_number_input('Enter number to select genre: ')
+                # Matching system to match genre to number - pass genre to search method
+                search_movies('genre', choice)
+            elif choice == 4:
+                pass
+            else:
+                pass
+                # print('Invalid input - please try again')
+            '''
+        elif choice == 2:
+            diplay_account_control()
+            
         elif choice == 3:
-            # List genres
-            choice = get_number_input('Enter number to select genre: ')
-            # Matching system to match genre to number - pass genre to search method
-            search_movies('genre', choice)
-        elif choice == 4:
-            pass
-        else:
-            pass
-            # print('Invalid input - please try again')
-    elif choice == 2:
-        diplay_user_info()
+            return_movie()
+        elif choice == 4: # Exit
+            break
+
         
 
 
@@ -448,7 +492,7 @@ username = get_user_input('Enter username (email address): ')
 if username_check(username) == True: # Check for valid username
     password = get_user_input('Enter your password: ') # If username check passes: check password
     if password_check(password) == True:
-        menu_control()
+        main_menu_control()
     else:
         print('Incorrect password, please try again')
 else:
