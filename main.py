@@ -24,8 +24,8 @@
 
 6. Search feature
     - Back to return to earlier page
-    - When returning to main menu, previous search is deleted ***ISSUE***
-    - When searching for actor 'Matt Damon' multiple pages were displayed automatically ***ISSUE***
+    - When returning to main menu, previous search is deleted ***FIXED***
+    - When searching for actor 'Matt Damon' multiple pages were displayed automatically ***FIXED***
     
 '''
 import json, math, textwrap
@@ -160,7 +160,8 @@ matching_movies = [] # global variable to be used by different methods, method r
 
 # Display menu
 def display_main_menu():
-    matching_movies = None
+    global matching_movies
+    matching_movies = []
     print('1. Search for a title')
     print('2. Your account/history')
     print('3. Return items')
@@ -257,7 +258,7 @@ def search_movies(search_type, search_term):
    
 
 
-
+# Can this code be re-factored to be more DRY?
 def movie_list_control(num_movies):
     i = 0
     # 'pages' to cycle when displaying movies on screen
@@ -266,7 +267,16 @@ def movie_list_control(num_movies):
         # Prints movie info for all but the last page   
         display_movie_list(i*10, (i+1)*10)
         print("More...")
-                
+        try:
+            choice = int(get_user_input("Press enter to continue or select movie "))
+            if (isinstance(choice, int)):
+                print('\n\n')
+                # Passes as arguments the selected title and the indexes currently being displayed
+                # So that the user can return to this list, if desired
+                display_selected_movie(choice-1, i*10, (i+1)*10)
+        except:
+            pass
+
         i += 1
 
     if (i == pages-1): # The last page
@@ -316,7 +326,7 @@ def display_selected_movie(index, from_index, to_index):
     elif (choice == 2):
         display_movie_list(from_index, to_index)
     elif (choice == 3):
-        display_main_menu()
+        main_menu_control()
     else:
         print('Invalid entry - please try again')
 
@@ -348,8 +358,7 @@ def show_user_movies(movie_list):
         print('Here are your current rentals:')
         i = 0
         while (i < len(movie_list)):
-            print(f'{i+1}. {movie_list[i].get_title()} ({movie_list[i].get_year()})')
-            print('\n')
+            print(f'{i+1}. {movie_list[i].get_title()} ({movie_list[i].get_year()})')            
             i += 1
     else:
         print('No rentals to show')
@@ -395,7 +404,7 @@ def diplay_account_control():
         # Show list of current rentals again
         return_movie()
     elif (choice == 2):
-        display_main_menu()
+        main_menu_control()
     else:
         print('Invalid entry - please try again')
 
