@@ -50,8 +50,16 @@ class User:
         fullname = f'{self.first} {self.last}'
         return fullname
       
-    def update_users(self):
-        # Add rental information to user list
+    def update_current_rentals(self, action, movie):
+        # action = ['rental', 'return']
+        if (action == 'rental'):
+            self.current_rentals.append(movie)
+            self.all_rentals.append(movie)
+        elif (action == 'return'):
+            self.current_rentals.remove(movie)
+
+    
+    def show_rentals():
         pass
 
 
@@ -60,21 +68,6 @@ class User:
         with open('user_list.json', 'w') as f:
             json.dumps(self.users, f, indent = 2)
 
-'''
-"title": "Airplane!",
-      "year": 1980,
-      "cast": [
-        "genres": [
-        "Comedy",
-        "Satire"
-      ],
-      "href": "Airplane!",
-      "extract": "Airplane! is a 1980 American parody film written and directed by the brothers David and Jerry Zucker, and Jim Abrahams in their directorial debuts, and produced by Jon Davison. It stars Robert Hays and Julie Hagerty and features Leslie Nielsen, Robert Stack, Lloyd Bridges, Peter Graves, Kareem Abdul-Jabbar, and Lorna Patterson. It is a parody of the disaster film genre, particularly the 1957 Paramount film Zero Hour!, from which it borrows its plot, central characters, and some dialogue. It also draws many elements from Airport 1975 and other films in the Airport series. It is known for its use of surreal humor and fast-paced slapstick comedy, including visual and verbal puns, gags, running jokes, and obscure humor.",
-      "thumbnail": "https://upload.wikimedia.org/wikipedia/en/2/21/Airplane%21_%281980_film%29.jpg",
-      "thumbnail_width": 258,
-      "thumbnail_height": 386
-
-'''
 
 class Movie:
     def __init__(self, title, year, cast, genres, href, extract, thumbnail, thumbnail_width, thumbnail_height):
@@ -109,7 +102,7 @@ class Movie:
     def cast_full(self):
         num_cast = len(self.cast) 
         print(f"Starring:") 
-        print('\t', end = '') # end argument removes the line break
+        # print('\t', end = '') # end argument removes the line break
         i = 0
         while i < num_cast:
             if(num_cast - i > 1):
@@ -152,7 +145,7 @@ def display_main_menu():
     print('Welcome to K-Star Video - the home of the latest movies and all time classics')
     print('******************************************************************************\n')
     print('1. Search for a title')
-    print('2. Your account')
+    print('2. Your account/history')
     print('3. Return items')
     print('4. Exit')
 
@@ -186,14 +179,27 @@ with open ('movies.json') as f:
     movies = json.load(f)
     # movies = movies.reverse()
 
-matching_movies = []
+matching_movies = [] # global variable to be used by different methods, method required to re-set it once new search begins
 
 
 def get_user_input(prompt):
-    input_value = input(prompt)
+    user_response = input(prompt)
 
-    print('\n')
-    return input_value
+    # print('\n')
+    return user_response
+
+# Use number input method whenever a menu option is to be selected
+def get_number_input(prompt):
+    user_response = None
+    while not (isinstance(user_response,int)):
+        user_input = get_user_input(prompt)
+        try:
+            user_response = int(user_input)
+        except ValueError:
+            print('Invalid input. Please try again (value error thrown)')
+        except TypeError:
+            print('Type error thrown')
+    return user_response
 
 
 def remainder_check(numerator, divisor):
@@ -205,24 +211,36 @@ def remainder_check(numerator, divisor):
 # Need to know the search term (title, actor, genre??) - lambda? comprehension?
 # Show a maximum of 10 results? Option to view next results if >10
 # Need to be able to select a title once the list is populated
-def search_movies():
-    search_title = get_user_input('Enter a title: ')
+def search_movies(search_type, search_term):
+    # search_type = ['title', 'actor', 'genre']
     global matching_movies
     
-    for movie in movies:       
-        if (search_title in movie.get('title')):
-            current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
-            matching_movies.append(current_movie)
+    for movie in movies:
+        if (search_type == 'title'):
+            if (search_term in movie.get('title').lower()):
+                current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
+                matching_movies.append(current_movie)
 
-    num_movies = len(matching_movies)
-    
+        elif (search_type == 'actor'):
+            # num_cast = len(movie.get('cast'))
+            for cast in movie.get('cast'):
+                if (search_term in cast.lower()):
+                    current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
+                    matching_movies.append(current_movie)
+
+        elif (search_type == 'genre'):
+            for genre in movie.get('genre'):
+                if (search_term in genre):
+                    current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
+                    matching_movies.append(current_movie)       
+
+    movie_list_control(len(matching_movies))
+   
+
+
+
+def movie_list_control(num_movies):
     i = 0
-    '''
-    i = 0 : movie 1 - 10
-    i = 1 : movie 11 - 20
-    i = 2 : movie 21 - 30
-    i = 3 : movie 31 - 33 (31:)
-    '''
     # 'pages' to cycle when displaying movies on screen
     pages = (num_movies // 10) + remainder_check(num_movies, 10)
     while (i < pages-1):
@@ -232,7 +250,10 @@ def search_movies():
         try:
             choice = int(get_user_input("Press enter to continue or select movie "))
             if (isinstance(choice, int)):
-                display_movie(choice-1)
+                print('\n\n')
+                # Passes as arguments the selected title and the indexes currently being displayed
+                # So that the user can return to this list, if desired
+                display_selected_movie(choice-1, i*10, (i+1)*10)
         except:
             pass
         
@@ -240,8 +261,6 @@ def search_movies():
 
     if (i == pages-1): # The last page
         display_movie_list(i*10, num_movies-1)
-
-
 
 
 # Method to display max 10 movies at a time
@@ -257,34 +276,69 @@ def display_movie_list(from_index, to_index):
         # count += 1
 
 
-def display_movie(index):
+def display_selected_movie(index, from_index, to_index):
     print(f'{matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
     matching_movies[index].cast_full() # prints all cast names
     print('\n')
     print(matching_movies[index].get_summary())
     print('\n')
     print(f'1. Rent Movie\t\t2. Back to list\t\t3. Back to menu')
+    choice = get_number_input('Enter number to select option: ')
+
+    if (choice == 1):
+        rent_movie(matching_movies[index])
+        # Rent movie screen
+    elif (choice == 2):
+        display_movie_list(from_index, to_index)
+    elif (choice == 3):
+        display_main_menu()
+    else:
+        print('Invalid entry - please try again')
+
     return get_user_input("Enter: ")
 
+
+def rent_movie(movie):
+    print(f'Title: {movie.get_title()} ({movie.get_year()})')
+    choice = get_user_input('Would you like to rent this movie? Enter "Y" or "N": ').upper()
+    if (choice == 'Y'):
+        # Call method to add title to user's list of current rentals
+        current_user.update_current_rentals("rental", movie)
+
+
+def return_movie(movie):
+    pass
+
+def view_user_movies():
+    pass
+   
 
 
 
 def menu_control():
     display_main_menu()
-    choice = get_user_input('')
-    if  choice == '1':
+    choice = get_number_input('Enter number to select menu option: ')
+    if  choice == 1:
         display_search_menu()
         # 1 = title, 2 = actor, 3 = genre
-        choice = get_user_input('')
-        if choice == '1': 
-            # choice = get_user_input('Enter title: ')
-            search_movies()
-        elif choice == '2': 
-            choice = get_user_input('Enter actor: ')
-        elif choice == '3':
-            choice = get_user_input('Enter genre: ') 
+        choice = get_number_input('Enter number to select menu option: ')
+        if choice == 1: 
+            choice = get_user_input('Enter title: ').lower()
+            search_movies('title', choice)
+        elif choice == 2: 
+            choice = get_user_input('Enter actor: ').lower()
+            search_movies('actor', choice)
+        elif choice == 3:
+            # List genres
+            choice = get_number_input('Enter number to select genre: ')
+            # Matching system to match genre to number - pass genre to search method
+            search_movies('genre', choice)
+        elif choice == 4:
+            pass
         else:
-            print('Invalid input - please try again')
+            pass
+            # print('Invalid input - please try again')
+
 
 
 
