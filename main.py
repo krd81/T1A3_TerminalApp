@@ -243,6 +243,7 @@ current_user = None
 
 
 def get_user_input(prompt):
+
     user_response = input(prompt)
 
     # print('\n')
@@ -314,33 +315,6 @@ def movie_list_control(num_movies):
     def selection_text():
         print('1. Select movie\t\t2. Go back to search menu\t\t')
     
-    def choice_response(selection, page_index):
-        match selection:
-            case 1:
-                # display selected movie
-                choice = get_number_input('\nEnter number of movie: ')
-                print('\n')
-                display_selected_movie(choice-1, page_index*10, (page_index+1)*10)
-                exit_request = True
-                return page_index, exit_request               
-            case 2:
-                search_menu_control()
-                exit_request = True
-                return page_index, exit_request
-            case 3:
-                # display previous page - update i / page number to go back 1
-                # display_movie_list((page_index-1)*10, (page_index)*10)
-                page_index -= 2
-                exit_request = False
-                return page_index, exit_request
-            # case 4:
-                # display next page
-                # pass
-            case _:
-                pass
-
-    
-    
     partial_page = 0
     if (num_movies % 10) > 0:
         partial_page = 1
@@ -352,6 +326,7 @@ def movie_list_control(num_movies):
     # all pages except last need NEXT
     # all pages except first need PREVIOUS    
     # most pages need NEXT/PREVIOUS **MOST COMMON = ELSE**
+    
     while (i < pages) and exit_request == False :
         if (i == 0):
             # First page  
@@ -360,7 +335,108 @@ def movie_list_control(num_movies):
             if (pages > 1):
                 print('4. Next page')  # Prints next page only if there is more than 1 page
             choice = get_number_input('\nEnter number choice to continue: ')
-            # i = choice_response(choice, i)[0]
+            match choice:
+                case 1:
+                    choice2 = get_number_input('\nEnter number of movie: ')
+                    display_selected_movie(choice2-1, i*10, min((i+1)*10, num_movies))
+                case 2:
+                    search_menu_control()
+                    exit_request = True
+                case 4: 
+                    # Next page
+                    if (pages > 1):
+                        # continue
+                        pass
+                    else:
+                        print('\nInvalid input please try again')
+                        i = -1
+                case _:
+                    print('\nInvalid input please try again')
+                    i = -1
+
+        elif (i == pages-1): 
+            # Last page
+            display_movie_list(i*10, num_movies-1)
+            selection_text()
+            print('3. Previous page')        
+            choice = get_number_input('\nEnter number choice to continue: ')
+            match choice:
+                case 1:
+                    choice2 = get_number_input('\nEnter number of movie: ')
+                    display_selected_movie(choice2-1, i*10, (i+1)*10)
+                case 2:
+                    search_menu_control()
+                    exit_request = True
+                case 3:
+                    # Previous page
+                    i -= 2
+                case _:
+                    print('\nInvalid input please try again')
+                    i = -1
+
+        else:
+            # All other pages
+            display_movie_list(i*10, (i+1)*10)
+            selection_text()
+            print('3. Previous page\t\t4. Next page')        
+            choice = get_number_input('\nEnter number choice to continue: ')
+            match choice:
+                case 1:
+                    choice2 = get_number_input('\nEnter number of movie: ')
+                    display_selected_movie(choice2-1, i*10, (i+1)*10)
+                case 2:
+                    search_menu_control()
+                    exit_request = True
+                case 3:
+                    # Previous page
+                    i -= 2
+                case 4:
+                    # Next page
+                    pass
+                case _:
+                    print('\nInvalid input please try again')
+                    i = -1
+
+        i += 1
+
+
+'''
+VER2
+ def choice_response(selection, page_index):
+        match selection:
+            case 1:
+                # display selected movie
+                choice = get_number_input('\nEnter number of movie: ')
+                print('\n')
+                display_selected_movie(choice-1, page_index*10, (page_index+1)*10)
+                exit_request = False # From here we want users to go back to the list if they want 
+                return page_index               
+            case 2:
+                search_menu_control()
+                exit_request = True
+                return page_index
+            case 3:
+                # display previous page - update i / page number to go back 1
+                # display_movie_list((page_index-1)*10, (page_index)*10)
+                page_index -= 2
+                exit_request = False
+                return page_index
+            # case 4:
+                # display next page
+                # pass
+            case _:
+                pass
+
+
+while (i < pages) and exit_request == False :
+        if (i == 0):
+            # First page  
+            display_movie_list(i*10, min((i+1)*10, num_movies))
+            selection_text()
+            if (pages > 1):
+                print('4. Next page')  # Prints next page only if there is more than 1 page
+            choice = get_number_input('\nEnter number choice to continue: ')
+            choice_response(choice, i)
             # exit_request = choice_response(choice, i)[1]
         elif (i == pages-1): 
             # Last page
@@ -368,7 +444,7 @@ def movie_list_control(num_movies):
             selection_text()
             print('3. Previous page')        
             choice = get_number_input('\nEnter number choice to continue: ')
-            # i = choice_response(choice, i)[0]
+            choice_response(choice, i)
             # exit_request = choice_response(choice, i)[1]
         else:
             # All other pages
@@ -376,15 +452,19 @@ def movie_list_control(num_movies):
             selection_text()
             print('3. Previous page\t\t4. Next page')        
             choice = get_number_input('\nEnter number choice to continue: ')
-            i = choice_response(choice, i)[0]
+            choice_response(choice, i)
             # exit_request = choice_response(choice, i)[1]
 
 
         i += 1
+'''
+
+
 
 
 
 '''
+VER1
 def movie_list_control(num_movies):
     i = 0
     # 'pages' to cycle when displaying movies on screen
@@ -455,7 +535,7 @@ def display_selected_movie(index, from_index, to_index):
             rent_movie(matching_movies[index])
             # Rent movie screen
             # What should happen once user has confirmed rental?
-            print(f'\n{matching_movies[index].get_title()} successfully rented]')
+            print(f'\n\'{matching_movies[index].get_title()}\' successfully rented!')
             choice2 = get_number_input('\n1. Back to search list\t\t2. Back to main menu\t\t etc')
             # --> options for choice
             match choice2:
@@ -553,6 +633,7 @@ def diplay_account_control():
 
 
 def search_menu_control():
+    matching_movies.clear() # Each time search menu is called, matching movies list is cleared
     display_search_menu()
         # 1 = title, 2 = actor, 3 = genre
     choice = get_number_input('\nEnter number to select menu option: ')
@@ -576,7 +657,8 @@ def search_menu_control():
         pass
         # print('Invalid input - please try again')
 
-def main_menu_control():    
+def main_menu_control():
+    matching_movies.clear() # Each time main menu is called, matching movies list is cleared    
     choice = None
     while choice != 4:
         display_main_menu()
