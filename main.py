@@ -26,6 +26,7 @@
     - Back to return to earlier page
     - When returning to main menu, previous search is deleted ***FIXED***
     - When searching for actor 'Matt Damon' multiple pages were displayed automatically ***FIXED***
+    - movie_list_control() method needs to be tidied
     
 '''
 import json, math, textwrap
@@ -304,6 +305,79 @@ def search_movies(search_type, search_term):
 
 
 # Can this code be re-factored to be more DRY?
+# Once a selection is made the search should be cleared
+# Add navigation options: previous / next / select / back to search menu
+def movie_list_control(num_movies):
+    exit_request = False
+    def selection_text():
+        print('1. Select movie\t\t2. Go back to search menu\t\t')
+    
+    def choice_response(selection, page_index):
+        match selection:
+            case 1:
+                # display selected movie
+                choice = get_number_input('\nEnter number of movie: ')
+                print('\n')
+                display_selected_movie(choice-1, page_index*10, (page_index+1)*10)
+                exit_request = True
+                return exit_request               
+            case 2:
+                search_menu_control()
+                exit_request = True
+                return exit_request
+            case 3:
+                # display previous page - update i / page number to go back 1
+                display_movie_list((page_index-1)*10, (page_index)*10)
+                i = page_index-1
+                return i
+            # case 4:
+                # display next page
+                # pass
+            case _:
+                pass
+
+    
+    
+    partial_page = 0
+    if (num_movies % 10) > 0:
+        partial_page = 1
+    i = 0
+    # 'pages' to cycle when displaying movies on screen
+    pages = (num_movies // 10) + partial_page
+    # Selection options will vary:
+    # all pages need option to select movie and go back to previous menu - **ALWAYS**
+    # all pages except last need NEXT
+    # all pages except first need PREVIOUS    
+    # most pages need NEXT/PREVIOUS **MOST COMMON = ELSE**
+    while (i < pages) and exit_request == False :
+        if (i == 0):
+            # First page  
+            display_movie_list(i*10, min((i+1)*10, num_movies))
+            selection_text()
+            print('4. Next page')        
+            choice = get_number_input('\nEnter number choice to continue: ')
+            choice_response(choice, i)
+        elif (i == pages-1): 
+            # Last page
+            display_movie_list(i*10, num_movies-1)
+            selection_text()
+            print('3. Previous page')        
+            choice = get_number_input('\nEnter number choice to continue: ')
+            choice_response(choice, i)
+        else:
+            # All other pages
+            display_movie_list(i*10, (i+1)*10)
+            selection_text()
+            print('3. Previous page\t\t4. Next page')        
+            choice = get_number_input('\nEnter number choice to continue: ')
+            choice_response(choice, i)
+
+
+        i += 1
+
+
+
+'''
 def movie_list_control(num_movies):
     i = 0
     # 'pages' to cycle when displaying movies on screen
@@ -313,7 +387,7 @@ def movie_list_control(num_movies):
         display_movie_list(i*10, (i+1)*10)
         print("More...")
         try:
-            choice = int(get_user_input("Press enter to continue or select movie "))
+            choice = int(get_user_input("\nPress enter to continue or select movie "))
             if (isinstance(choice, int)):
                 print('\n\n')
                 # Passes as arguments the selected title and the indexes currently being displayed
@@ -328,7 +402,7 @@ def movie_list_control(num_movies):
         display_movie_list(i*10, num_movies-1)
     
     try:
-        choice = int(get_user_input("Press enter to continue or select movie "))
+        choice = int(get_user_input('\nPress enter to continue or select movie '))
         if (isinstance(choice, int)):
             print('\n\n')
             # Passes as arguments the selected title and the indexes currently being displayed
@@ -336,6 +410,9 @@ def movie_list_control(num_movies):
             display_selected_movie(choice-1, i*10, (i+1)*10)
     except:
         pass
+
+'''
+
 
 
 # Method to display max 10 movies at a time
@@ -363,24 +440,29 @@ def display_selected_movie(index, from_index, to_index):
 
     print('\n')
     print(f'1. Rent Movie\t\t2. Back to list\t\t3. Back to menu')
-    choice = get_number_input('Enter number to select option: ')
+    choice = get_number_input('\nEnter number to select option: ')
 
-    if (choice == 1):
-        rent_movie(matching_movies[index])
-        # Rent movie screen
-    elif (choice == 2):
-        display_movie_list(from_index, to_index)
-    elif (choice == 3):
-        main_menu_control()
-    else:
-        print('Invalid entry - please try again')
+    match choice:
+        case 1:
+            rent_movie(matching_movies[index])
+            # Rent movie screen
+            # What should happen once user has confirmed rental?
+            print('[title name successfully rented]')
+            choice = get_number_input('\n1. Back to search list\t\t2. Back to main menu\t\t etc')
+            # --> options for choice
+        case 2:
+            display_movie_list(from_index, to_index)
+        case 3:
+            main_menu_control()
+        case _:
+            print('Invalid entry - please try again')
 
-    # return get_user_input("Enter: ")
+   
 
 
 def rent_movie(movie):
     print(f'Title: {movie.get_title()} ({movie.get_year()})')
-    choice = get_user_input('Would you like to rent this movie? Enter "Y" or "N": ').upper()
+    choice = get_user_input('\nWould you like to rent this movie? Enter "Y" or "N": ').upper()
     if (choice == 'Y'):
         # Call method to add title to user's list of current rentals
         current_user.update_current_rentals('rental', movie)
@@ -389,7 +471,7 @@ def rent_movie(movie):
 def return_movie():    
     show_user_movies(current_user.get_current_rentals())
     print('***************************************************************************')
-    choice = get_number_input('Enter the movie number you\'re returning: ')
+    choice = get_number_input('\nEnter the movie number you\'re returning: ')
     # Call update_rental method, with the 'return' parameter
     current_user.update_current_rentals('return', current_user.get_current_rentals()[choice-1])
     print('Item returned')
@@ -444,7 +526,7 @@ def diplay_account_control():
     '''
     print('***************************************************************************')
     print(f'1. Return Movie\t\t2. Back to main menu')
-    choice = get_number_input('Enter number to select option: ')
+    choice = get_number_input('\nEnter number to select option: ')
     if (choice == 1): # Return movie
         # Show list of current rentals again
         return_movie()
@@ -454,32 +536,22 @@ def diplay_account_control():
         print('Invalid entry - please try again')
 
 
-def genre_menu_control():
-    display_genre_menu()
-    choice = get_number_input('Enter selected genre number: ')   
-    # Each genre number represents one or more genre categories
-    # The search_movies() method will search for films which
-    # include the specified genre   
-    search_movies('genre', choice)
-       
-
-
 
 
 
 def search_menu_control():
     display_search_menu()
         # 1 = title, 2 = actor, 3 = genre
-    choice = get_number_input('Enter number to select menu option: ')
+    choice = get_number_input('\nEnter number to select menu option: ')
     if choice == 1: 
-        choice = get_user_input('Enter title: ').lower()
+        choice = get_user_input('\nEnter title: ').lower()
         search_movies('title', choice)
     elif choice == 2: 
-        choice = get_user_input('Enter actor: ').lower()
+        choice = get_user_input('\nEnter actor: ').lower()
         search_movies('actor', choice)
     elif choice == 3:
         display_genre_menu()
-        choice = get_number_input('Enter selected genre number: ')   
+        choice = get_number_input('\nEnter selected genre number: ')   
         # Each genre number represents one or more genre categories
         # The search_movies() method will search for films which
         # include the specified genre   
@@ -496,7 +568,7 @@ def main_menu_control():
     while choice != 4:
         display_main_menu()
         # 1 = search, 2 = account, 3 = return items
-        choice = get_number_input('Enter number to select menu option: ')
+        choice = get_number_input('\nEnter number to select menu option: ')
         if  choice == 1:
             search_menu_control()
             '''

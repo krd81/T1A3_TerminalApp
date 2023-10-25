@@ -19,3 +19,20 @@ print(genre[3][1])
 print(genre.keys())
 print(genre.values())
 print(genre.items())
+
+
+'''
+From movie rental confirmation: go back to search list didn't work
+From movie rental confirmation: go back to main menu works
+
+When search list is displayed, next page works
+When search list is displayed, strange result for previous page: lists previous 10 movies 
+but then starts printing the next set
+
+From the movie list page: go back to search list does work
+From search menu, return to main menu works
+
+Type 4 for exit is no longer working
+
+
+'''
