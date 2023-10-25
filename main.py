@@ -148,10 +148,30 @@ class Movie:
         if len(self.cast) > 4 :
             print('...')
 
+'''
+class MovieCategory:
 
+    genre = {}
 
-
-
+    genre['Comedy'] = ['Comedy']
+    genre['Romance'] = ['Romance']
+    genre['Drama'] = ['Drama', 'Adventure', 'Mystery', 'Political', 'Legal']
+    genre['Musical'] = ['Musical', 'Dance']
+    genre['Kids'] = ['Family', 'Animated', 'Live Action']
+    genre['Action'] = ['Action', 'Superhero', 'Crime', 'Spy', 'Disaster', 'War', 'Western']
+    genre['Sci-Fi'] = ['Science Fiction', 'Fantasy']
+    genre['Horror'] = ['Horror', 'Slasher']
+    genre['Thriller'] = ['Thriller', 'Suspense']
+    genre['Documentary'] = ['Documentary', 'Biography', 'Political', 'Historical', 'Sports']
+    
+    decade = {}
+    
+    decade['2020s'] = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029']
+    decade['2010s'] = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
+    decade['2000s'] = ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009']
+    decade['1990s'] = ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999']
+    decade['1980s'] = ['1980', '1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988', '1989']
+'''
 
 
 # Main
@@ -176,17 +196,37 @@ def display_search_menu():
 def display_genre_menu():
     print('1. Comedy')
     print('2. Romance')
-    print('3. Drama')
-    print('4. Musical')
-    print('5. Kids')
-    print('6. Action')
-    print('7. Sci-fi')
-    print('8. Horror')
-    print('9. Documentary')
-    print('10. Biopic')
-    print('11. TV Shows')
+    print('3. Drama') # "Adventure", "Mystery", "Political", "Legal"
+    print('4. Musical') # "Dance"
+    print('5. Kids') # Search "Family", "Animated", "Live Action"
+    print('6. Action') # Search "Crime" "War", "Disaster", "Spy", "Superhero", "Western", 
+    print('7. Sci-fi') # Search  "Science Fiction", "Fantasy"
+    print('8. Horror') # "Slasher"
+    print('9. Thriller')
+    print('10. Documentary') # Search "Biography","Political","Historical", "Sports", 
+    print('11. Return to main menu')
 
-    print('n. Return to main menu')
+
+genre = {}
+
+genre[1] = ['Comedy']
+genre[2] = ['Romance']
+genre[3] = ['Drama', 'Adventure', 'Mystery', 'Political', 'Legal']
+genre[4] = ['Musical', 'Dance']
+genre[5] = ['Family', 'Animated', 'Live Action']
+genre[6] = ['Action', 'Superhero', 'Crime', 'Spy', 'Disaster', 'War', 'Western']
+genre[7] = ['Science Fiction', 'Fantasy']
+genre[8] = ['Horror', 'Slasher']
+genre[9] = ['Thriller', 'Suspense']
+genre[10] = ['Documentary', 'Biography', 'Political', 'Historical', 'Sports']
+
+decade = {}
+
+decade['2020s'] = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029']
+decade['2010s'] = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
+decade['2000s'] = ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009']
+decade['1990s'] = ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999']
+decade['1980s'] = ['1980', '1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988', '1989']
 
 
 with open ('user_list.json') as f:
@@ -249,10 +289,15 @@ def search_movies(search_type, search_term):
                     matching_movies.append(current_movie)
 
         elif (search_type == 'genre'):
-            for genre in movie.get('genre'):
-                if (search_term in genre):
-                    current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
-                    matching_movies.append(current_movie)       
+            global genre
+            # Search_term in this case is a number from 1-10 representing all genre categories
+            search_genre = genre[search_term]
+            # search_genre = 'Romance'
+            for search_genre in genre[search_term]:
+                for movie_genre in movie.get('genres'):
+                    if (search_genre in movie_genre):
+                        current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
+                        matching_movies.append(current_movie)       
 
     movie_list_control(len(matching_movies))
    
@@ -355,7 +400,7 @@ def return_movie():
 
 def show_user_movies(movie_list):
     if (len(movie_list) > 0):
-        print('Here are your current rentals:')
+        print('Here are your current/previous rentals:')
         i = 0
         while (i < len(movie_list)):
             print(f'{i+1}. {movie_list[i].get_title()} ({movie_list[i].get_year()})')            
@@ -409,6 +454,19 @@ def diplay_account_control():
         print('Invalid entry - please try again')
 
 
+def genre_menu_control():
+    display_genre_menu()
+    choice = get_number_input('Enter selected genre number: ')   
+    # Each genre number represents one or more genre categories
+    # The search_movies() method will search for films which
+    # include the specified genre   
+    search_movies('genre', choice)
+       
+
+
+
+
+
 def search_menu_control():
     display_search_menu()
         # 1 = title, 2 = actor, 3 = genre
@@ -420,20 +478,20 @@ def search_menu_control():
         choice = get_user_input('Enter actor: ').lower()
         search_movies('actor', choice)
     elif choice == 3:
-        # List genres
-        choice = get_number_input('Enter number to select genre: ')
-        # Matching system to match genre to number - pass genre to search method
+        display_genre_menu()
+        choice = get_number_input('Enter selected genre number: ')   
+        # Each genre number represents one or more genre categories
+        # The search_movies() method will search for films which
+        # include the specified genre   
         search_movies('genre', choice)
+        
     elif choice == 4:
-        pass
+        main_menu_control()
     else:
         pass
         # print('Invalid input - please try again')
 
-def main_menu_control():
-    # Initial welcome message
-    print('Welcome to K-Star Video - the home of the latest movies and all time classics')
-    print('*****************************************************************************\n')
+def main_menu_control():    
     choice = None
     while choice != 4:
         display_main_menu()
@@ -501,6 +559,9 @@ username = get_user_input('Enter username (email address): ')
 if username_check(username) == True: # Check for valid username
     password = get_user_input('Enter your password: ') # If username check passes: check password
     if password_check(password) == True:
+        # Initial welcome message
+        print('Welcome to K-Star Video - the home of the latest movies and all time classics')
+        print('*****************************************************************************\n')
         main_menu_control()
     else:
         print('Incorrect password, please try again')

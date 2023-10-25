@@ -1,38 +1,22 @@
 [
   "Comedy",
-
+  "Romance",
+  "Drama",
+  "Musical",
   "Action",
   "Family",
   "Science Fiction",
   "Horror",
-
-  "Drama",
+  "Thriller", "Suspense",
+  "Documentary",
+  
   "Crime",
-
-  "Animated",
-  "Musical",
-  "Romance",
-  "Thriller",
-
-
-
+  "Animated",  
+  
   "Mystery",
   "Adventure",
-
-
-
   "Biography",
-
-  "Documentary",
-
-
-
-
-
   "Fantasy",
-
   "Political",
-
-
   "Historical"
 ]

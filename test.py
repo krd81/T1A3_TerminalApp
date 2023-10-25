@@ -1,21 +1,21 @@
-import textwrap
-extract = "Harry Potter and the Philosopher's Stone is a 2001 fantasy film directed by Chris Columbus and produced by David Heyman, from a screenplay by Steve Kloves, based on the 1997 novel of the same name by J. K. Rowling. It is the first instalment in the Harry Potter film series. The film stars Daniel Radcliffe as Harry Potter, with Rupert Grint as Ron Weasley, and Emma Watson as Hermione Granger. Its story follows Harry's first year at Hogwarts School of Witchcraft and Wizardry as he discovers that he is a famous wizard and begins his formal wizarding education."
+# // "password": "WhvjdnWE"
+
+genre = {}
+
+genre[1] = ['Comedy']
+genre[2] = ['Romance']
+genre[3] = ['Drama', 'Adventure', 'Mystery', 'Political', 'Legal']
+genre[4] = ['Musical', 'Dance']
+genre[5] = ['Family', 'Animated', 'Live Action']
+genre[6] = ['Action', 'Superhero', 'Crime', 'Spy', 'Disaster', 'War', 'Western']
+genre[7] = ['Science Fiction', 'Fantasy']
+genre[8] = ['Horror', 'Slasher']
+genre[9] = ['Thriller', 'Suspense']
+genre[10] = ['Documentary', 'Biography', 'Political', 'Historical', 'Sports']
 
 
+print(genre[3][1])
 
-output = textwrap.wrap(extract, width = 100, break_long_words= False)
-
-
-for line in output:
-    print(line)    
-print()
-
-
-
-'''
-i = 0
-while (i < len(output)):
-    print(output[i])
-    i += 1
-print()
-'''
+print(genre.keys())
+print(genre.values())
+print(genre.items())
