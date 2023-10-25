@@ -22,12 +22,15 @@ print(genre.items())
 
 
 '''
-From movie rental confirmation: go back to search list didn't work
+From movie rental confirmation: go back to search list didn't work **Check this is fixed**
 From movie rental confirmation: go back to main menu works
 
 When search list is displayed, next page works
 When search list is displayed, strange result for previous page: lists previous 10 movies 
 but then starts printing the next set
+- Seem to have fixed previous page display - but unable to select movie once previous list is shown
+  Should have taken choice as per line 362
+
 
 From the movie list page: go back to search list does work
 From search menu, return to main menu works

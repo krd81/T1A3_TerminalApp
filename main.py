@@ -308,6 +308,8 @@ def search_movies(search_type, search_term):
 # Once a selection is made the search should be cleared
 # Add navigation options: previous / next / select / back to search menu
 def movie_list_control(num_movies):
+    
+    i = 0
     exit_request = False
     def selection_text():
         print('1. Select movie\t\t2. Go back to search menu\t\t')
@@ -320,16 +322,17 @@ def movie_list_control(num_movies):
                 print('\n')
                 display_selected_movie(choice-1, page_index*10, (page_index+1)*10)
                 exit_request = True
-                return exit_request               
+                return page_index, exit_request               
             case 2:
                 search_menu_control()
                 exit_request = True
-                return exit_request
+                return page_index, exit_request
             case 3:
                 # display previous page - update i / page number to go back 1
-                display_movie_list((page_index-1)*10, (page_index)*10)
-                i = page_index-1
-                return i
+                # display_movie_list((page_index-1)*10, (page_index)*10)
+                page_index -= 2
+                exit_request = False
+                return page_index, exit_request
             # case 4:
                 # display next page
                 # pass
@@ -341,7 +344,7 @@ def movie_list_control(num_movies):
     partial_page = 0
     if (num_movies % 10) > 0:
         partial_page = 1
-    i = 0
+    
     # 'pages' to cycle when displaying movies on screen
     pages = (num_movies // 10) + partial_page
     # Selection options will vary:
@@ -354,23 +357,27 @@ def movie_list_control(num_movies):
             # First page  
             display_movie_list(i*10, min((i+1)*10, num_movies))
             selection_text()
-            print('4. Next page')        
+            if (pages > 1):
+                print('4. Next page')  # Prints next page only if there is more than 1 page
             choice = get_number_input('\nEnter number choice to continue: ')
-            choice_response(choice, i)
+            # i = choice_response(choice, i)[0]
+            # exit_request = choice_response(choice, i)[1]
         elif (i == pages-1): 
             # Last page
             display_movie_list(i*10, num_movies-1)
             selection_text()
             print('3. Previous page')        
             choice = get_number_input('\nEnter number choice to continue: ')
-            choice_response(choice, i)
+            # i = choice_response(choice, i)[0]
+            # exit_request = choice_response(choice, i)[1]
         else:
             # All other pages
             display_movie_list(i*10, (i+1)*10)
             selection_text()
             print('3. Previous page\t\t4. Next page')        
             choice = get_number_input('\nEnter number choice to continue: ')
-            choice_response(choice, i)
+            i = choice_response(choice, i)[0]
+            # exit_request = choice_response(choice, i)[1]
 
 
         i += 1
@@ -428,6 +435,7 @@ def display_movie_list(from_index, to_index):
         # count += 1
 
 
+# display_selected_movie() method calls the rent_movie() method 
 def display_selected_movie(index, from_index, to_index):
     print(f'{matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
     matching_movies[index].cast_full() # prints all cast names
@@ -439,17 +447,22 @@ def display_selected_movie(index, from_index, to_index):
     print()
 
     print('\n')
-    print(f'1. Rent Movie\t\t2. Back to list\t\t3. Back to menu')
-    choice = get_number_input('\nEnter number to select option: ')
+    print(f'1. Rent Movie\t\t2. Back to search list\t\t3. Back to main menu')
+    choice1 = get_number_input('\nEnter number to select option: ')
 
-    match choice:
+    match choice1:
         case 1:
             rent_movie(matching_movies[index])
             # Rent movie screen
             # What should happen once user has confirmed rental?
-            print('[title name successfully rented]')
-            choice = get_number_input('\n1. Back to search list\t\t2. Back to main menu\t\t etc')
+            print(f'\n{matching_movies[index].get_title()} successfully rented]')
+            choice2 = get_number_input('\n1. Back to search list\t\t2. Back to main menu\t\t etc')
             # --> options for choice
+            match choice2:
+                case 1:
+                    display_movie_list(from_index, to_index)
+                case _:
+                    pass
         case 2:
             display_movie_list(from_index, to_index)
         case 3:
