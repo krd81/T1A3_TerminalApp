@@ -14,12 +14,9 @@ genre[9] = ['Thriller', 'Suspense']
 genre[10] = ['Documentary', 'Biography', 'Political', 'Historical', 'Sports']
 
 
-print(genre[3][1])
-
-print(genre.keys())
-print(genre.values())
-print(genre.items())
-
+print('{0:28}{1:28}'.format('1. Select movie','2. Go back to search menu'))
+print('{0:28}{1:28}'.format('3. << First Page','4. Last Page >>'))
+print('{0:28}{1:28}'.format('5. < Previous Page','6. Next Page >'))
 
 '''
 Cycling through menus now works
@@ -39,5 +36,10 @@ From search menu, return to main menu works
 
 Type 4 for exit is no longer working
 
+Selecting 'N' from movie rental screen, goes back to the original list, but doesn't give page options etc - 
+it goes straight back to the search main menu
+
+Selecting 'Y' from movie rental screen, then going back to search list - returns to next page instead of 
+last page shown previously
 
 '''
