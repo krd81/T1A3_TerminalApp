@@ -322,7 +322,7 @@ def movie_list_control(num_movies, page_num = 0):
         search_menu_control()
     
     def selection_text():
-        print('{0:28}{1:28}'.format('1. Select movie','2. Go back to search menu'))
+        print('{0:28}{1:28}'.format('1. Select movie','2. Back to search menu'))
     
     partial_page = 0
     if (num_movies % 10) > 0:
@@ -352,7 +352,7 @@ def movie_list_control(num_movies, page_num = 0):
                 case 1:
                     choice2 = get_number_input('\nEnter number of movie: ')
                     # display_selected_movie(choice2-1, i*10, min((i+1)*10, num_movies))
-                    display_selected_movie(choice2-1, i-1)
+                    display_selected_movie(choice2-1, i)
                 case 2:
                     search_menu_control()
                     exit_request = True
@@ -392,7 +392,7 @@ def movie_list_control(num_movies, page_num = 0):
                 case 1:
                     choice2 = get_number_input('\nEnter number of movie: ')
                     # display_selected_movie(choice2-1, i*10, num_movies-1)
-                    display_selected_movie(choice2-1, i-1)
+                    display_selected_movie(choice2-1, i)
                 case 2:
                     search_menu_control()
                     exit_request = True
@@ -425,7 +425,7 @@ def movie_list_control(num_movies, page_num = 0):
                 case 1:
                     choice2 = get_number_input('\nEnter number of movie: ')
                     # display_selected_movie(choice2-1, i*10, (i+1)*10)
-                    display_selected_movie(choice2-1, i-1)
+                    display_selected_movie(choice2-1, i)
                 case 2:
                     search_menu_control()
                     exit_request = True
@@ -455,7 +455,7 @@ def display_movie_list(from_index, to_index):
     # count = 1
     while index < to_index:
         # For element 0 - 9 [10 - 19, 20 - 29 etc], print movie info
-        print(f'{index+1}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
+        print(f'{index+1}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})') #***PROBLEM***
         matching_movies[index].cast_shortlist() # prints cast names
         print('\n')
         index += 1
@@ -502,7 +502,7 @@ def display_selected_movie(index, page_number):
 
 
 def print_separator():
-    print('*'*75)
+    print('*'*77)
 
 
 
