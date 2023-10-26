@@ -157,18 +157,21 @@ matching_movies = [] # global variable to be used by different methods, method r
 def display_main_menu():
     global matching_movies
     # matching_movies = []
+    print('\n')
     print('1. Search for a movie')
     print('2. Your account')
     print('3. Return items')
     print('4. Exit')
 
 def display_search_menu():
+    print('\n')
     print('1. Search by title')
     print('2. Search by actor e.g. "Tom Hanks or Julia Roberts"')
     print('3. Search by genre')
     print('4. Return to main menu')
 
 def display_genre_menu():
+    print('\n')
     print('1. Comedy')
     print('2. Romance')
     print('3. Drama') # "Adventure", "Mystery", "Political", "Legal"
@@ -271,14 +274,7 @@ def search_movies(search_type, search_term):
                         matching_movies.append(current_movie)       
 
     movie_list_control(len(matching_movies))
-   
-
-'''
-
-print('{0:28}{1:28}'.format('3. << First Page','4. Last Page >>'))
-print('{0:28}{1:28}'.format('5. < Previous Page','6. Next Page >'))
-'''
-
+ 
 
 # Can this code be re-factored to be more DRY?
 # Once a selection is made the search should be cleared
@@ -320,7 +316,6 @@ def movie_list_control(num_movies, page_num = 0):
             match choice:
                 case 1:
                     choice2 = get_number_input('\nEnter number of movie: ')
-                    # display_selected_movie(choice2-1, i*10, min((i+1)*10, num_movies))
                     display_selected_movie(choice2-1, i)
                 case 2:
                     search_menu_control()
@@ -351,7 +346,7 @@ def movie_list_control(num_movies, page_num = 0):
 
         elif (i == pages-1): 
             # Last page
-            display_movie_list(i*10, num_movies-1)
+            display_movie_list(i*10, num_movies)
             print(f'\nPage {i+1} of {pages}\n')
             selection_text()
             print('{0:28}{1:28}'.format('3. << First Page','4. Last Page >>'))
@@ -360,7 +355,6 @@ def movie_list_control(num_movies, page_num = 0):
             match choice:
                 case 1:
                     choice2 = get_number_input('\nEnter number of movie: ')
-                    # display_selected_movie(choice2-1, i*10, num_movies-1)
                     display_selected_movie(choice2-1, i)
                 case 2:
                     search_menu_control()
@@ -484,6 +478,7 @@ def rent_movie(movie):
         print(f'\n\'{movie.get_title()}\' successfully rented!')
 
 
+
 def return_movie():    
     show_user_movies(current_user.get_current_rentals(), 'Current movie rentals:')
     print('\n')
@@ -491,7 +486,13 @@ def return_movie():
 
     choice = get_number_input('\nEnter the movie number you\'re returning: ')
 
-    current_user.update_current_rentals('return', current_user.get_current_rentals()[choice-1])
+    try:
+        current_user.update_current_rentals('return', current_user.get_current_rentals()[choice-1])
+    except IndexError:
+        print('\nError - invalid input')
+        main_menu_control()
+    
+    
     print('Item returned')
     print('CURRENT RENTALS:')
     show_user_movies(current_user.get_current_rentals(), 'Current movie rentals:')
@@ -543,8 +544,6 @@ def diplay_account_control():
 
 
 
-
-
 def search_menu_control():
     matching_movies.clear() # Each time search menu is called, matching movies list is cleared
     display_search_menu()
@@ -570,6 +569,7 @@ def search_menu_control():
         pass
         # print('Invalid input - please try again')
 
+
 def main_menu_control():
     matching_movies.clear() # Each time main menu is called, matching movies list is cleared    
     choice = None
@@ -589,29 +589,15 @@ def main_menu_control():
                 users.insert(current_user.get_index(), current_user)
                 # Writes data back to file when user exits
                 try:
-                    with open ('user_list_updated.json', 'x') as f:
+                    with open ('user_list_updated.json', 'w') as f:
                         json.dumps(users, skipkeys=True, indent = 2)
                 except TypeError:
                     exit()
                 exit()
             case _:
                 print('\Error - invalid input')
-'''
-        if  choice == 1:
-            search_menu_control()           
-        elif choice == 2:
-            diplay_account_control()
-            
-        elif choice == 3:
-            return_movie()
-        elif choice == 4: # Exit
-            break
-'''
+
         
-
-
-
-
 
 def username_check(email):
     result = False
@@ -631,8 +617,6 @@ def password_check(password):
     if (password == current_user.get_password()):
         result = True
     return result
-
-
 
 
 
