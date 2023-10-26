@@ -29,7 +29,8 @@
     - movie_list_control() method needs to be tidied
     
 '''
-import json, math, textwrap
+import json, textwrap
+
 class User:
     def __init__(self, id, email, first, last, company, created_at, country, password) -> None:
         self.id = id
@@ -43,10 +44,6 @@ class User:
         self.current_rentals = []
         self.all_rentals = []
         
-  
-
- 
-
     
     
     def get_firstname(self):
@@ -80,11 +77,12 @@ class User:
 
     def get_rental_history(self):
         return self.all_rentals
+  
 
-    # Writes data back to file when user exits
-    def save_users(self):
-        with open('user_list.json', 'w') as f:
-            json.dumps(self.users, f, indent = 2)
+    def get_index(self):
+        user_list_index = self.id-1
+        return user_list_index
+
 
 
 class Movie:
@@ -197,12 +195,15 @@ genre[8] = ['Horror', 'Slasher']
 genre[9] = ['Thriller', 'Suspense']
 genre[10] = ['Documentary', 'Biography', 'Political', 'Historical', 'Sports']
 
+users = []
 
 with open ('user_list.json') as f:
-    global users
+    # global users
     users = json.load(f)
+    
 
 with open ('movies.json') as f:
+    # pass
     movies = json.load(f)
     # movies = movies.reverse()
 
@@ -584,6 +585,14 @@ def main_menu_control():
             case 3:
                 return_movie()
             case 4:
+                # Updates users list with any changes
+                users.insert(current_user.get_index(), current_user)
+                # Writes data back to file when user exits
+                try:
+                    with open ('user_list_updated.json', 'x') as f:
+                        json.dumps(users, skipkeys=True, indent = 2)
+                except TypeError:
+                    exit()
                 exit()
             case _:
                 print('\Error - invalid input')
@@ -612,7 +621,8 @@ def username_check(email):
             global current_user
             current_user = User(user.get('id'),user.get('email'),user.get('first'),user.get('last'),user.get('company'),user.get('created_at'),user.get('country'),user.get('password'))
             result = True
-            break    # break is to stop the if statement once a match has been found    
+            users.pop(current_user.get_index())
+            break    # break is to stop the if statement once a match has been found        
     return result
 
 
