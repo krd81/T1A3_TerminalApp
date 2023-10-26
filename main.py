@@ -149,30 +149,6 @@ class Movie:
         if len(self.cast) > 4 :
             print('...')
 
-'''
-class MovieCategory:
-
-    genre = {}
-
-    genre['Comedy'] = ['Comedy']
-    genre['Romance'] = ['Romance']
-    genre['Drama'] = ['Drama', 'Adventure', 'Mystery', 'Political', 'Legal']
-    genre['Musical'] = ['Musical', 'Dance']
-    genre['Kids'] = ['Family', 'Animated', 'Live Action']
-    genre['Action'] = ['Action', 'Superhero', 'Crime', 'Spy', 'Disaster', 'War', 'Western']
-    genre['Sci-Fi'] = ['Science Fiction', 'Fantasy']
-    genre['Horror'] = ['Horror', 'Slasher']
-    genre['Thriller'] = ['Thriller', 'Suspense']
-    genre['Documentary'] = ['Documentary', 'Biography', 'Political', 'Historical', 'Sports']
-    
-    decade = {}
-    
-    decade['2020s'] = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029']
-    decade['2010s'] = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
-    decade['2000s'] = ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009']
-    decade['1990s'] = ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999']
-    decade['1980s'] = ['1980', '1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988', '1989']
-'''
 
 
 # Main
@@ -220,14 +196,6 @@ genre[7] = ['Science Fiction', 'Fantasy']
 genre[8] = ['Horror', 'Slasher']
 genre[9] = ['Thriller', 'Suspense']
 genre[10] = ['Documentary', 'Biography', 'Political', 'Historical', 'Sports']
-
-decade = {}
-
-decade['2020s'] = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029']
-decade['2010s'] = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019']
-decade['2000s'] = ['2000', '2001', '2002', '2003', '2004', '2005', '2006', '2007', '2008', '2009']
-decade['1990s'] = ['1990', '1991', '1992', '1993', '1994', '1995', '1996', '1997', '1998', '1999']
-decade['1980s'] = ['1980', '1981', '1982', '1983', '1984', '1985', '1986', '1987', '1988', '1989']
 
 
 with open ('user_list.json') as f:
@@ -455,7 +423,7 @@ def display_movie_list(from_index, to_index):
     # count = 1
     while index < to_index:
         # For element 0 - 9 [10 - 19, 20 - 29 etc], print movie info
-        print(f'{index+1}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})') #***PROBLEM***
+        print(f'{index+1}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
         matching_movies[index].cast_shortlist() # prints cast names
         print('\n')
         index += 1
@@ -608,29 +576,20 @@ def main_menu_control():
         display_main_menu()
         # 1 = search, 2 = account, 3 = return items
         choice = get_number_input('\nEnter number to select menu option: ')
+        match choice:
+            case 1:
+                search_menu_control()
+            case 2:
+                diplay_account_control()
+            case 3:
+                return_movie()
+            case 4:
+                exit()
+            case _:
+                print('\Error - invalid input')
+'''
         if  choice == 1:
-            search_menu_control()
-            '''
-            display_search_menu()
-            # 1 = title, 2 = actor, 3 = genre
-            choice = get_number_input('Enter number to select menu option: ')
-            if choice == 1: 
-                choice = get_user_input('Enter title: ').lower()
-                search_movies('title', choice)
-            elif choice == 2: 
-                choice = get_user_input('Enter actor: ').lower()
-                search_movies('actor', choice)
-            elif choice == 3:
-                # List genres
-                choice = get_number_input('Enter number to select genre: ')
-                # Matching system to match genre to number - pass genre to search method
-                search_movies('genre', choice)
-            elif choice == 4:
-                pass
-            else:
-                pass
-                # print('Invalid input - please try again')
-            '''
+            search_menu_control()           
         elif choice == 2:
             diplay_account_control()
             
@@ -638,7 +597,7 @@ def main_menu_control():
             return_movie()
         elif choice == 4: # Exit
             break
-
+'''
         
 
 
@@ -665,38 +624,29 @@ def password_check(password):
 
 
 
+
+
 # Add try/except or while loop to allow repeated username / password entries
-username = get_user_input('Enter username (email address): ')
-if username_check(username) == True: # Check for valid username
-    password = get_user_input('Enter your password: ') # If username check passes: check password
-    if password_check(password) == True:
-        # Initial welcome message
-        print_separator()
-        print('Welcome to K-Star Video - the home of the latest movies and all time classics')
-        print_separator()
+def user_check():
+    while username_check(None) == False:
+        username = get_user_input('Enter username (email address): ')
+        if username_check(username) == True: # Check for valid username            
+            while password_check(None) == False:
+                password = get_user_input('Enter your password: ') # If username check passes: check password
+                if password_check(password) == True:
+                    # Initial welcome message
+                    print_separator()
+                    print('Welcome to K-Star Video - the home of the latest movies and all time classics')
+                    print_separator()
 
-        main_menu_control()
-    else:
-        print('Incorrect password, please try again')
-else:
-    print('Email address not recognised, please try again')
+                    main_menu_control()
+                else:
+                    print('Incorrect password, please try again')
+        else:
+            print('Email address not recognised, please try again')
 
-'''
-while get_user_input() != '4':
-    display_main_menu()
+user_check()
 
-    match get_user_input():
-        case 1:
-            print("yes")
-        case 2:
-            print("yes")
-        case 3:
-            print("yes")
-        case 4:
-            print("yes")
-        case _:
-            print("yes")
-'''
 
 
 
