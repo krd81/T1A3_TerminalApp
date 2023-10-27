@@ -29,7 +29,8 @@
     - movie_list_control() method needs to be tidied
     
 '''
-import json, textwrap
+import json, textwrap, pwinput
+
 
 class User:
     def __init__(self, id, email, first, last, company, created_at, country, password) -> None:
@@ -200,15 +201,13 @@ genre[10] = ['Documentary', 'Biography', 'Political', 'Historical', 'Sports']
 
 users = []
 
-with open ('user_list.json') as f:
-    # global users
+with open ('user_list.json') as f:    
     users = json.load(f)
     
 
-with open ('movies.json') as f:
-    # pass
+with open ('movies.json') as f:    
     movies = json.load(f)
-    # movies = movies.reverse()
+
 
 
 current_user = None
@@ -597,7 +596,7 @@ def main_menu_control():
             case _:
                 print('\Error - invalid input')
 
-        
+
 
 def username_check(email):
     result = False
@@ -626,7 +625,7 @@ def user_check():
         username = get_user_input('Enter username (email address): ')
         if username_check(username) == True: # Check for valid username            
             while password_check(None) == False:
-                password = get_user_input('Enter your password: ') # If username check passes: check password
+                password = pwinput.pwinput(prompt = 'Enter your password: ') # pwinput module used to hide password characters
                 if password_check(password) == True:
                     # Initial welcome message
                     print_separator()
@@ -641,6 +640,7 @@ def user_check():
 
 user_check()
 
-
+def add(n1, n2):
+    return n1 + n2
 
 
