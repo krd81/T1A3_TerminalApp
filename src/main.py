@@ -43,25 +43,25 @@ class User:
         self.password = password
         self.current_rentals = []
         self.all_rentals = []
-        
-    
-    
+
+
+
     def get_firstname(self):
         return self.first
 
     def get_fullname(self):
         fullname = f'{self.first} {self.last}'
         return fullname
-    
+
     def get_email(self):
         return self.email
 
     def get_password(self):
         return self.password
-    
+
     def get_country(self):
         return self.country
-      
+
     def update_current_rentals(self, action, movie):
         # action = ['rental', 'return']
         if (action == 'rental'):
@@ -77,7 +77,7 @@ class User:
 
     def get_rental_history(self):
         return self.all_rentals
-  
+
 
     def get_index(self):
         user_list_index = self.id-1
@@ -87,7 +87,7 @@ class User:
 
 class Movie:
     def __init__(self, title, year, cast, genres, href, extract, thumbnail, thumbnail_width, thumbnail_height):
-        self.title = title 
+        self.title = title
         self.year = year
         self.cast = cast
         self.genres = genres
@@ -100,24 +100,24 @@ class Movie:
 
     def get_title(self):
         return self.title
-    
+
     def get_year(self):
         return self.year
-    
-    def get_cast(self):      
+
+    def get_cast(self):
         return self.cast
-    
+
     def get_genres(self):
         return self.genres
-    
+
     def get_summary(self):
         return self.summary
-    
-    
+
+
      # cast_full() method prints all cast names when a title is displayed
     def cast_full(self):
         num_cast = len(self.cast) 
-        print(f"Starring:") 
+        print(f"Starring:")
         # print('\t', end = '') # end argument removes the line break
         i = 0
         while i < num_cast:
@@ -126,7 +126,6 @@ class Movie:
             else:
                 print(self.cast[i], end = '') # Omits the ',' for the last name
             i += 1
-   
 
 
 
@@ -142,7 +141,7 @@ class Movie:
             else:
                 print(self.cast[i], end = '') # Omits the ',' for the last name
             i += 1
-        
+
         # If not all cast is shown '...' is printed to indicate some names are not shown
         if len(self.cast) > 4 :
             print('...')
@@ -203,7 +202,7 @@ if __name__ == "__main__":
     with open ('user_list.json') as f:
         # global users
         users = json.load(f)
-        
+
 
     with open ('movies.json') as f:
         # pass
@@ -234,15 +233,15 @@ if __name__ == "__main__":
                 print('Type error thrown')
         return user_response
 
-   
-   
+
+
     # Need to know the search term (title, actor, genre??) - lambda? comprehension?
     # Show a maximum of 10 results? Option to view next results if >10
     # Need to be able to select a title once the list is populated
     def search_movies(search_type, search_term):
         # search_type = ['title', 'actor', 'genre']
         global matching_movies
-        
+
         for movie in movies:
             if (search_type == 'title'):
                 if (search_term in movie.get('title').lower()):
@@ -268,7 +267,7 @@ if __name__ == "__main__":
                             matching_movies.append(current_movie)       
 
         movie_list_control(len(matching_movies))
-    
+
 
     # Checks if there is any remainder after dividing by 10 (for displaying search results)
     def remainder_check(numerator, divisor):
@@ -282,13 +281,13 @@ if __name__ == "__main__":
     # Can this code be re-factored to be more DRY?
     # Once a selection is made the search should be cleared
     # Add navigation options: previous / next / select / back to search menu
-    def movie_list_control(num_movies, page_num = 0):    
+    def movie_list_control(num_movies, page_num = 0):
         exit_request = False
         if num_movies == 0:
             print('\nNo results found')
             exit_request = True
             search_menu_control()
-        
+
         def selection_text():
             print('{0:28}{1:28}'.format('1. Select movie','2. Back to search menu'))
 
@@ -298,10 +297,10 @@ if __name__ == "__main__":
         # Selection options will vary:
         # all pages need option to select movie and go back to previous menu - **ALWAYS**
         # all pages except last need NEXT
-        # all pages except first need PREVIOUS    
+        # all pages except first need PREVIOUS
         # most pages need NEXT/PREVIOUS **MOST COMMON = ELSE**
         i = page_num
-        
+
         while (i < pages) and exit_request == False :
             if (i == 0):
                 # First page  
@@ -326,31 +325,31 @@ if __name__ == "__main__":
                     case 4: 
                         # Last page
                         if (pages > 1):
-                            i = pages-2 # When reaching the end of the loop, i will be increased by 1                        
+                            i = pages-2 # When reaching the end of the loop, i will be increased by 1
                         else:
                             i = -1 # Re-print same page: 1st page = last page
                     case 5:
                         # Previous page
                         print('\nInvalid input - there are no previous pages')
-                        i = -1                   
+                        i = -1
                     case 6:
                         # Next page
                         if (pages > 1):
                             pass
                         else:
                             print('\nInvalid input - there are no more pages')
-                            i = -1                   
+                            i = -1
                     case _:
                         print('\nInvalid input please try again')
                         i = -1
 
-            elif (i == pages-1): 
+            elif (i == pages-1):
                 # Last page
                 display_movie_list(i*10, num_movies)
                 print(f'\nPage {i+1} of {pages}\n')
                 selection_text()
                 print('{0:28}{1:28}'.format('3. << First Page','4. Last Page >>'))
-                print('{0:28}{1:28}'.format('5. < Previous Page','6. Next Page >'))      
+                print('{0:28}{1:28}'.format('5. < Previous Page','6. Next Page >'))
                 choice = get_number_input('\nEnter number choice to continue: ')
                 match choice:
                     case 1:
@@ -382,7 +381,7 @@ if __name__ == "__main__":
                 print(f'\nPage {i+1} of {pages}\n')
                 selection_text()
                 print('{0:28}{1:28}'.format('3. << First Page','4. Last Page >>'))
-                print('{0:28}{1:28}'.format('5. < Previous Page','6. Next Page >'))       
+                print('{0:28}{1:28}'.format('5. < Previous Page','6. Next Page >'))
                 choice = get_number_input('\nEnter number choice to continue: ')
                 match choice:
                     case 1:
@@ -403,7 +402,7 @@ if __name__ == "__main__":
                         i -= 2
                     case 6:
                         # Next page
-                        pass                                     
+                        pass
                     case _:
                         print('\nInvalid input please try again')
                         i = -1
@@ -445,7 +444,7 @@ if __name__ == "__main__":
                 rent_movie(matching_movies[index]) 
                 # Rent movie screen
                 # What should happen once user has confirmed rental?
-                
+
                 print('\n1. Back to search list\t\t2. Back to main menu')
                 choice2 = get_number_input('\nEnter number to select option: ')
                 # --> options for choice
@@ -491,8 +490,8 @@ if __name__ == "__main__":
         except IndexError:
             print('\nError - invalid input')
             main_menu_control()
-        
-        
+
+
         print('Item returned')
         print('CURRENT RENTALS:')
         show_user_movies(current_user.get_current_rentals(), 'Current movie rentals:')
@@ -506,7 +505,7 @@ if __name__ == "__main__":
             print(header_text)
             i = 0
             while (i < len(movie_list)):
-                print(f'\t{i+1}. {movie_list[i].get_title()} ({movie_list[i].get_year()})')            
+                print(f'\t{i+1}. {movie_list[i].get_title()} ({movie_list[i].get_year()})')
                 i += 1
         else:
             print('No rentals to show')
@@ -523,7 +522,7 @@ if __name__ == "__main__":
 
         print('CURRENT RENTALS:')
         show_user_movies(current_user.get_current_rentals(), 'Current movie rentals:')
-        
+
         print('\n')
         print_separator()
 
@@ -557,12 +556,12 @@ if __name__ == "__main__":
             search_movies('actor', actor_choice)
         elif choice == 3:
             display_genre_menu()
-            genre_choice = get_number_input('\nEnter selected genre number: ')   
+            genre_choice = get_number_input('\nEnter selected genre number: ')
             # Each genre number represents one or more genre categories
             # The search_movies() method will search for films which
             # include the specified genre   
             search_movies('genre', genre_choice)
-            
+
         elif choice == 4:
             main_menu_control()
         else:
@@ -571,7 +570,7 @@ if __name__ == "__main__":
 
 
     def main_menu_control():
-        matching_movies.clear() # Each time main menu is called, matching movies list is cleared    
+        matching_movies.clear() # Each time main menu is called, matching movies list is cleared
         choice = None
         while choice != 4:
             display_main_menu()
@@ -597,18 +596,18 @@ if __name__ == "__main__":
                 case _:
                     print('\Error - invalid input')
 
-            
+
 
     def username_check(email):
         result = False
-        
+
         for user in users:
             if(email == user.get('email')):
                 global current_user
                 current_user = User(user.get('id'),user.get('email'),user.get('first'),user.get('last'),user.get('company'),user.get('created_at'),user.get('country'),user.get('password'))
                 result = True
                 users.pop(current_user.get_index())
-                break    # break is to stop the if statement once a match has been found        
+                break    # break is to stop the if statement once a match has been found
         return result
 
 
@@ -624,7 +623,7 @@ if __name__ == "__main__":
     def user_check():
         while username_check(None) == False:
             username = get_user_input('Enter username (email address): ')
-            if username_check(username) == True: # Check for valid username            
+            if username_check(username) == True: # Check for valid username
                 while password_check(None) == False:
                     password = pwinput.pwinput(prompt = 'Enter your password: ') # If username check passes: check password
                     if password_check(password) == True:
