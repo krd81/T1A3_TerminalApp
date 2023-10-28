@@ -32,7 +32,8 @@
 import json, textwrap, pwinput
 
 class User:
-    def __init__(self, id, email, first, last, company, created_at, country, password) -> None:
+    def __init__(self, id, email, first, last, company, created_at, 
+                 country, password):
         self.id = id
         self.email = email
         self.first = first
@@ -70,7 +71,7 @@ class User:
         elif (action == 'return'):
             self.current_rentals.remove(movie)
 
-    
+
     def get_current_rentals(self):
         return self.current_rentals
 
@@ -214,10 +215,7 @@ if __name__ == "__main__":
 
 
     def get_user_input(prompt):
-
         user_response = input(prompt)
-
-        # print('\n')
         return user_response
 
     # Use number input method whenever a menu option is to be selected
@@ -245,14 +243,20 @@ if __name__ == "__main__":
         for movie in movies:
             if (search_type == 'title'):
                 if (search_term in movie.get('title').lower()):
-                    current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
+                    current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), 
+                        movie.get('genres'), movie.get('href'), movie.get('extract'), 
+                        movie.get('thumbnail'), movie.get('thumbnail_width'), 
+                        movie.get('thumbnail_height'))
                     matching_movies.append(current_movie)
 
             elif (search_type == 'actor'):
                 # num_cast = len(movie.get('cast'))
                 for cast in movie.get('cast'):
                     if (search_term in cast.lower()):
-                        current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
+                        current_movie = Movie(movie.get('title'), movie.get('year'), 
+                                movie.get('cast'), movie.get('genres'), movie.get('href'), 
+                                movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), 
+                                movie.get('thumbnail_height'))
                         matching_movies.append(current_movie)
 
             elif (search_type == 'genre'):
@@ -263,8 +267,11 @@ if __name__ == "__main__":
                 for search_genre in genre[search_term]:
                     for movie_genre in movie.get('genres'):
                         if (search_genre in movie_genre):
-                            current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), movie.get('genres'), movie.get('href'), movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), movie.get('thumbnail_height'))            
-                            matching_movies.append(current_movie)       
+                            current_movie = Movie(movie.get('title'), movie.get('year'), 
+                                    movie.get('cast'), movie.get('genres'), movie.get('href'), 
+                                    movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), 
+                                    movie.get('thumbnail_height'))
+                            matching_movies.append(current_movie)
 
         movie_list_control(len(matching_movies))
 
@@ -310,7 +317,7 @@ if __name__ == "__main__":
                 selection_text()
                 if (pages > 1):
                     print('{0:28}{1:28}'.format('3. << First Page','4. Last Page >>'))
-                    print('{0:28}{1:28}'.format('5. < Previous Page','6. Next Page >'))  # Prints next page only if there is more than 1 page
+                    print('{0:28}{1:28}'.format('5. < Previous Page','6. Next Page >'))
                 choice = get_number_input('\nEnter number choice to continue: ')
                 match choice:
                     case 1:
@@ -417,7 +424,8 @@ if __name__ == "__main__":
         # count = 1
         while index < to_index:
             # For element 0 - 9 [10 - 19, 20 - 29 etc], print movie info
-            print(f'{index+1}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
+            print(f'{index+1}: {matching_movies[index].get_title()} 
+                  ({matching_movies[index].get_year()})')
             matching_movies[index].cast_shortlist() # prints cast names
             print('\n')
             index += 1
@@ -426,13 +434,15 @@ if __name__ == "__main__":
 
     # display_selected_movie() method calls the rent_movie() method 
     def display_selected_movie(index, page_number):
-        print(f'{matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
+        print(f'{matching_movies[index].get_title()} 
+              ({matching_movies[index].get_year()})')
         matching_movies[index].cast_full() # prints all cast names
         print('\n')
         # Print wrapped lines for better readability
-        plot_summary = textwrap.wrap((matching_movies[index].get_summary()), width = 100, break_long_words= False)
+        plot_summary = textwrap.wrap((matching_movies[index].get_summary()), 
+                                     width = 100, break_long_words= False)
         for line in plot_summary:
-            print(line)    
+            print(line)
         print()
 
         print('\n')
@@ -450,7 +460,9 @@ if __name__ == "__main__":
                 # --> options for choice
                 match choice2:
                     case 1:
-                        movie_list_control(len(matching_movies), page_number) # Need to call movie_list_control but with page number so that it returns to the previous list
+                        # Need to call movie_list_control but with page number
+                        # so that it returns to the previous list
+                        movie_list_control(len(matching_movies), page_number)
                     case 2:
                         main_menu_control()
                     case _:
@@ -470,7 +482,8 @@ if __name__ == "__main__":
 
     def rent_movie(movie):
         print(f'Title: {movie.get_title()} ({movie.get_year()})')
-        choice = get_user_input('\nWould you like to rent this movie? Enter "Y" or "N": ').upper()
+        choice = get_user_input
+        ('\nWould you like to rent this movie? Enter "Y" or "N": ').upper()
         if (choice == 'Y'):
             # Call method to add title to user's list of current rentals
             current_user.update_current_rentals('rental', movie)
@@ -486,7 +499,8 @@ if __name__ == "__main__":
         choice = get_number_input('\nEnter the movie number you\'re returning: ')
 
         try:
-            current_user.update_current_rentals('return', current_user.get_current_rentals()[choice-1])
+            current_user.update_current_rentals('return', 
+                        current_user.get_current_rentals()[choice-1])
         except IndexError:
             print('\nError - invalid input')
             main_menu_control()
@@ -544,7 +558,8 @@ if __name__ == "__main__":
 
 
     def search_menu_control():
-        matching_movies.clear() # Each time search menu is called, matching movies list is cleared
+        # Each time search menu is called, matching movies list is cleared
+        matching_movies.clear()
         display_search_menu()
             # 1 = title, 2 = actor, 3 = genre
         choice = get_number_input('\nEnter number to select menu option: ')
@@ -570,7 +585,8 @@ if __name__ == "__main__":
 
 
     def main_menu_control():
-        matching_movies.clear() # Each time main menu is called, matching movies list is cleared
+        # Each time main menu is called, matching movies list is cleared
+        matching_movies.clear()
         choice = None
         while choice != 4:
             display_main_menu()
@@ -604,7 +620,9 @@ if __name__ == "__main__":
         for user in users:
             if(email == user.get('email')):
                 global current_user
-                current_user = User(user.get('id'),user.get('email'),user.get('first'),user.get('last'),user.get('company'),user.get('created_at'),user.get('country'),user.get('password'))
+                current_user = User(user.get('id'), user.get('email'), user.get('first'), 
+                                    user.get('last'), user.get('company'), user.get('created_at'), 
+                                    user.get('country'), user.get('password'))
                 result = True
                 users.pop(current_user.get_index())
                 break    # break is to stop the if statement once a match has been found
@@ -640,14 +658,12 @@ if __name__ == "__main__":
 
     user_check()
 
-# Checks if there is any remainder after dividing by 10 (for displaying search results)
+# Checks if there is any remainder after dividing by 10 (for displaying 
+# search results)
 def remainder_check(numerator, divisor):
     result = 0
     if(numerator % divisor) > 0:
         result = 1
     return result
-
-def add(n1, n2):
-    return n1 + n2
 
 
