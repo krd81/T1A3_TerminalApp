@@ -31,7 +31,12 @@ It is possible to select a title, view its information and from there, rent the 
 When the user has finished using the app, they can exit by selecting '4' on the main menu. This option terminates the application.
 
 
+## Source Control
+[GitHib Repo](https://github.com/krd81/T1A3_TerminalApp)
+
+
 ## Project Management
 There is a separate file with screenshots showing various stages of the project plan
 [Screenshots](./docs/T1A3_Project_Screenshots.pdf)
+
 [Github links](./docs/T1A3_Project_Plan.tsv)
