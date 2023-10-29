@@ -17,8 +17,11 @@ Install using: `pip install pyinput`
 Users need to correctly enter their username and password in order for the menu to be displayed.
 
 During testing I have used -
+
 username: ricky19@gmail.com
+
 password: BaQlpSGv
+
 
 The menu options are self explanatory and users can navigate by entering the specific number of the menu items.
 
@@ -37,6 +40,7 @@ When the user has finished using the app, they can exit by selecting '4' on the 
 
 ## Project Management
 There is a separate file with screenshots showing various stages of the project plan
+
 [Screenshots](./docs/T1A3_Project_Screenshots.pdf)
 
 [Github links](./docs/T1A3_Project_Plan.tsv)
