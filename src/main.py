@@ -6,6 +6,8 @@ try:
 except ModuleNotFoundError:
     pass
 
+# STYLE GUIDE: this code follows Python PEP8 styling guidelines
+# Where I have deviated from this, I have left a comment giving the reason
 
 class User:
     def __init__(self, id, email, first, last, company, created_at, 
@@ -132,7 +134,6 @@ if __name__ == "__main__":
 
     def display_main_menu():
         matching_movies
-        # matching_movies = []
         print('\n')
         print('1. Search for a movie')
         print('2. Your account')
@@ -142,7 +143,7 @@ if __name__ == "__main__":
     def display_search_menu():
         print('\n')
         print('1. Search by title')
-        print('2. Search by actor e.g. "Tom Hanks or Julia Roberts"')
+        print('2. Search by actor')
         print('3. Search by genre')
         print('4. Return to main menu')
 
@@ -158,7 +159,7 @@ if __name__ == "__main__":
         print('8. Horror') # "Slasher"
         print('9. Thriller')
         print('10. Documentary') # Search "Biography","Political","Historical", "Sports", 
-        print('11. Return to main menu')
+        print('11. Return to search menu')
 
 
     genre = {}
@@ -183,10 +184,7 @@ if __name__ == "__main__":
     with open ('./src/movies.json') as f:
         movies = json.load(f)
 
-
-
     current_user = None
-
 
     def get_user_input(prompt):
         user_response = input(prompt)
@@ -242,7 +240,7 @@ if __name__ == "__main__":
                                 movie.get('thumbnail_width'), 
                                 movie.get('thumbnail_height'))
                         matching_movies.append(current_movie)
-
+            # ERROR: Need to handle user selecting to exit genre menu!
             elif (search_type == 'genre'):
                 genre
                 # Search_term in this case is a number from 1-10 
@@ -413,8 +411,8 @@ if __name__ == "__main__":
         # count = 1
         while index < to_index:
             # For element 0 - 9 [10 - 19, 20 - 29 etc], print movie info
-            print(f'{index+1}: {matching_movies[index].get_title()} \
-                  ({matching_movies[index].get_year()})')
+            # Line length rule break to ensure correct printing in app
+            print(f'{index+1}: {matching_movies[index].get_title()} ({matching_movies[index].get_year()})')
             matching_movies[index].cast_shortlist() # prints cast names
             print('\n')
             index += 1
@@ -564,8 +562,11 @@ if __name__ == "__main__":
             genre_choice = get_number_input('\nEnter selected genre number: ')
             # Each genre number represents one or more genre categories
             # The search_movies() method will search for films which
-            # include the specified genre   
-            search_movies('genre', genre_choice)
+            # include the specified genre ('11' = return to search menu)
+            if genre_choice == 11:
+                display_search_menu()
+            else:
+                search_movies('genre', genre_choice)
 
         elif choice == 4:
             main_menu_control()
