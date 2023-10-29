@@ -1,35 +1,11 @@
-'''
-1. Create login page
-    - Enter email address / password
-    - If incorrect, give message, allow repeat attempts
-    - If correct, display welcome message
+import json
+import textwrap
 
-2. Create menu
-    - Search for titles, by name, genre etc
-    - Check for current rentals
-    - Rent title
-    - Return title
-    - Confirmation
-    - Menus need to keep cycling until user chooses to exit - use 'while != ' condition each time
+try:
+    import pwinput
+except ModuleNotFoundError:
+    pass
 
-3. Class for users, creates "users", updates their rental history, current rentals (recommendations?)
-
-4. Class for titles (data required: title, genre, actors, year, runtime, rating, plot)
-
-5. Main will be responsible for: 
-    - requesting username/password
-    - displaying the menu
-    - adding users
-    - renting/returning titles
-
-6. Search feature
-    - Back to return to earlier page
-    - When returning to main menu, previous search is deleted ***FIXED***
-    - When searching for actor 'Matt Damon' multiple pages were displayed automatically ***FIXED***
-    - movie_list_control() method needs to be tidied
-    
-'''
-import json, textwrap, pwinput
 
 class User:
     def __init__(self, id, email, first, last, company, created_at, 
@@ -87,7 +63,8 @@ class User:
 
 
 class Movie:
-    def __init__(self, title, year, cast, genres, href, extract, thumbnail, thumbnail_width, thumbnail_height):
+    def __init__(self, title, year, cast, genres, href, extract, thumbnail, 
+                 thumbnail_width, thumbnail_height):
         self.title = title
         self.year = year
         self.cast = cast
@@ -151,11 +128,10 @@ class Movie:
 
 # Main
 if __name__ == "__main__": 
-    matching_movies = [] # global variable to be used by different methods, method required to re-set it once new search begins
+    matching_movies = [] 
 
-    # Display menu
     def display_main_menu():
-        global matching_movies
+        matching_movies
         # matching_movies = []
         print('\n')
         print('1. Search for a movie')
@@ -200,15 +176,13 @@ if __name__ == "__main__":
 
     users = []
 
-    with open ('user_list.json') as f:
-        # global users
+    with open ('./src/user_list.json') as f:
         users = json.load(f)
 
 
-    with open ('movies.json') as f:
-        # pass
+    with open ('./src/movies.json') as f:
         movies = json.load(f)
-        # movies = movies.reverse()
+
 
 
     current_user = None
@@ -238,14 +212,19 @@ if __name__ == "__main__":
     # Need to be able to select a title once the list is populated
     def search_movies(search_type, search_term):
         # search_type = ['title', 'actor', 'genre']
-        global matching_movies
+        matching_movies
 
         for movie in movies:
             if (search_type == 'title'):
                 if (search_term in movie.get('title').lower()):
-                    current_movie = Movie(movie.get('title'), movie.get('year'), movie.get('cast'), 
-                        movie.get('genres'), movie.get('href'), movie.get('extract'), 
-                        movie.get('thumbnail'), movie.get('thumbnail_width'), 
+                    current_movie = Movie(movie.get('title'), 
+                        movie.get('year'), 
+                        movie.get('cast'), 
+                        movie.get('genres'), 
+                        movie.get('href'), 
+                        movie.get('extract'), 
+                        movie.get('thumbnail'), 
+                        movie.get('thumbnail_width'), 
                         movie.get('thumbnail_height'))
                     matching_movies.append(current_movie)
 
@@ -253,23 +232,34 @@ if __name__ == "__main__":
                 # num_cast = len(movie.get('cast'))
                 for cast in movie.get('cast'):
                     if (search_term in cast.lower()):
-                        current_movie = Movie(movie.get('title'), movie.get('year'), 
-                                movie.get('cast'), movie.get('genres'), movie.get('href'), 
-                                movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), 
+                        current_movie = Movie(movie.get('title'), 
+                                movie.get('year'), 
+                                movie.get('cast'), 
+                                movie.get('genres'), 
+                                movie.get('href'), 
+                                movie.get('extract'), 
+                                movie.get('thumbnail'), 
+                                movie.get('thumbnail_width'), 
                                 movie.get('thumbnail_height'))
                         matching_movies.append(current_movie)
 
             elif (search_type == 'genre'):
-                global genre
-                # Search_term in this case is a number from 1-10 representing all genre categories
+                genre
+                # Search_term in this case is a number from 1-10 
+                # representing all genre categories
                 search_genre = genre[search_term]
                 # search_genre = 'Romance'
                 for search_genre in genre[search_term]:
                     for movie_genre in movie.get('genres'):
                         if (search_genre in movie_genre):
-                            current_movie = Movie(movie.get('title'), movie.get('year'), 
-                                    movie.get('cast'), movie.get('genres'), movie.get('href'), 
-                                    movie.get('extract'), movie.get('thumbnail'), movie.get('thumbnail_width'), 
+                            current_movie = Movie(movie.get('title'), 
+                                    movie.get('year'), 
+                                    movie.get('cast'), 
+                                    movie.get('genres'), 
+                                    movie.get('href'), 
+                                    movie.get('extract'), 
+                                    movie.get('thumbnail'), 
+                                    movie.get('thumbnail_width'), 
                                     movie.get('thumbnail_height'))
                             matching_movies.append(current_movie)
 
@@ -285,7 +275,6 @@ if __name__ == "__main__":
 
 
 
-    # Can this code be re-factored to be more DRY?
     # Once a selection is made the search should be cleared
     # Add navigation options: previous / next / select / back to search menu
     def movie_list_control(num_movies, page_num = 0):
@@ -332,7 +321,7 @@ if __name__ == "__main__":
                     case 4: 
                         # Last page
                         if (pages > 1):
-                            i = pages-2 # When reaching the end of the loop, i will be increased by 1
+                            i = pages-2 # At end of the loop, i will be increased by 1
                         else:
                             i = -1 # Re-print same page: 1st page = last page
                     case 5:
@@ -424,7 +413,7 @@ if __name__ == "__main__":
         # count = 1
         while index < to_index:
             # For element 0 - 9 [10 - 19, 20 - 29 etc], print movie info
-            print(f'{index+1}: {matching_movies[index].get_title()} 
+            print(f'{index+1}: {matching_movies[index].get_title()} \
                   ({matching_movies[index].get_year()})')
             matching_movies[index].cast_shortlist() # prints cast names
             print('\n')
@@ -434,7 +423,7 @@ if __name__ == "__main__":
 
     # display_selected_movie() method calls the rent_movie() method 
     def display_selected_movie(index, page_number):
-        print(f'{matching_movies[index].get_title()} 
+        print(f'{matching_movies[index].get_title()} \
               ({matching_movies[index].get_year()})')
         matching_movies[index].cast_full() # prints all cast names
         print('\n')
@@ -482,8 +471,8 @@ if __name__ == "__main__":
 
     def rent_movie(movie):
         print(f'Title: {movie.get_title()} ({movie.get_year()})')
-        choice = get_user_input
-        ('\nWould you like to rent this movie? Enter "Y" or "N": ').upper()
+        choice = get_user_input('\nWould you like to rent this movie? \
+                                \nEnter "Y" or "N": ').upper()
         if (choice == 'Y'):
             # Call method to add title to user's list of current rentals
             current_user.update_current_rentals('rental', movie)
@@ -491,7 +480,7 @@ if __name__ == "__main__":
 
 
 
-    def return_movie():    
+    def return_movie():
         show_user_movies(current_user.get_current_rentals(), 'Current movie rentals:')
         print('\n')
         print_separator()
@@ -519,6 +508,7 @@ if __name__ == "__main__":
             print(header_text)
             i = 0
             while (i < len(movie_list)):
+                # Line length rule break to ensure correct printing in app
                 print(f'\t{i+1}. {movie_list[i].get_title()} ({movie_list[i].get_year()})')
                 i += 1
         else:
@@ -610,7 +600,7 @@ if __name__ == "__main__":
                         exit()
                     exit()
                 case _:
-                    print('\Error - invalid input')
+                    print('\nError - invalid input')
 
 
 
@@ -643,11 +633,17 @@ if __name__ == "__main__":
             username = get_user_input('Enter username (email address): ')
             if username_check(username) == True: # Check for valid username
                 while password_check(None) == False:
-                    password = pwinput.pwinput(prompt = 'Enter your password: ') # If username check passes: check password
+                    # If username check passes: check password
+                    # try / except used in case pwinput module is not found
+                    try:
+                        password = pwinput.pwinput(prompt = 'Enter your password: ')
+                    except NameError:
+                        password = get_user_input('Enter your password: ')
                     if password_check(password) == True:
                         # Initial welcome message
                         print_separator()
-                        print('Welcome to K-Star Video - the home of the latest movies and all time classics')
+                        print('Welcome to K-Star Video - the home of the ',end="")
+                        print('latest movies and all time classics')
                         print_separator()
 
                         main_menu_control()
